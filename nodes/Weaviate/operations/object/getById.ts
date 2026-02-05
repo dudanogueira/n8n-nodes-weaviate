@@ -1,4 +1,4 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
 import { buildOperationMetadata } from '../../helpers/utils';
 
@@ -29,7 +29,7 @@ export async function execute(
 			includeVector: additionalOptions.includeVectors || false,
 		});
 
-		const result: any = {
+		const result: IDataObject = {
 			id: object?.uuid,
 			collection: collectionName,
 			properties: object?.properties,

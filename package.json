@@ -37,6 +37,9 @@
     "n8n": {
         "n8nNodesApiVersion": 1,
         "strict": false,
+        "credentials": [
+            "dist/credentials/WeaviateApi.credentials.js"
+        ],
         "nodes": [
             "dist/nodes/Weaviate/Weaviate.node.js"
         ]

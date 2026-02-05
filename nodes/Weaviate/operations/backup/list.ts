@@ -1,4 +1,4 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
 import { buildOperationMetadata } from '../../helpers/utils';
 
@@ -16,7 +16,7 @@ export async function execute(
 		const backupArray = Array.isArray(backups) ? backups : [backups];
 		
 		// Return each backup as a separate item
-		const results: INodeExecutionData[] = backupArray.map((backup: any) => ({
+		const results: INodeExecutionData[] = backupArray.map((backup: IDataObject) => ({
 			json: {
 				backend,
 				id: backup.id,

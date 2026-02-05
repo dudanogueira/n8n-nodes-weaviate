@@ -25,9 +25,8 @@ export async function getWeaviateClient(
 			if (openaiApiKey) {
 				headers['X-OpenAI-Api-Key'] = openaiApiKey;
 			}
-		} catch (error) {
-			// Log error but don't fail - credential might be optional
-			console.warn(`Failed to load OpenAI credential '${credentials.openai_credential_name}': ${(error as Error).message}`);
+		} catch {
+			// Credential might be optional - silently continue if not found
 		}
 	}
 

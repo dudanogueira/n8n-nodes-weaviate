@@ -1,4 +1,4 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
 import { buildOperationMetadata } from '../../helpers/utils';
 
@@ -14,7 +14,7 @@ export async function execute(
 		let collectionNames: string[];
 		// Handle if collections is an array or object
 		if (Array.isArray(collections)) {
-			collectionNames = collections.map((col: any) => col.name || col);
+			collectionNames = collections.map((col: IDataObject) => (col.name as string) || (col as unknown as string));
 		} else {
 			collectionNames = Object.keys(collections);
 		}

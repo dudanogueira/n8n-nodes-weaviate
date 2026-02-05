@@ -1,4 +1,4 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
 import { buildOperationMetadata } from '../../helpers/utils';
 
@@ -25,7 +25,7 @@ export async function execute(
 		
 		// tenants.get() returns an array of tenant objects
 		const tenantArray = Array.isArray(tenants) ? tenants : [tenants];
-		const exists = tenantArray.some((t: any) => t.name === tenantName);
+		const exists = tenantArray.some((t: IDataObject) => t.name === tenantName);
 
 		return [
 			{

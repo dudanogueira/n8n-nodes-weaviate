@@ -6,6 +6,7 @@ import type {
 	ILoadOptionsFunctions,
 	INodePropertyOptions,
 	INodeListSearchResult,
+	IDataObject,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
@@ -120,7 +121,7 @@ export class Weaviate implements INodeType {
 					
 					// Handle if collections is an array or object
 					if (Array.isArray(collections)) {
-						collectionNames = collections.map((col: any) => col.name || col);
+						collectionNames = collections.map((col: IDataObject) => (col.name as string) || (col as unknown as string));
 					} else {
 						collectionNames = Object.keys(collections);
 					}
