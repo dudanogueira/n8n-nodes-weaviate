@@ -13,6 +13,7 @@ import { collectionOperations, collectionFields } from './descriptions/Collectio
 import { objectOperations, objectFields } from './descriptions/ObjectDescription';
 import { searchOperations, searchFields } from './descriptions/SearchDescription';
 import { backupOperations, backupFields } from './descriptions/BackupDescription';
+import { tenantOperations, tenantFields } from './descriptions/TenantDescription';
 
 import { getWeaviateClient } from './helpers/client';
 
@@ -64,6 +65,11 @@ export class Weaviate implements INodeType {
 						value: 'backup',
 						description: 'Manage backups',
 					},
+					{
+						name: 'Tenant',
+						value: 'tenant',
+						description: 'Manage multi-tenancy',
+					},
 				],
 				default: 'collection',
 			},
@@ -75,6 +81,8 @@ export class Weaviate implements INodeType {
 			...searchFields,
 			...backupOperations,
 			...backupFields,
+			...tenantOperations,
+			...tenantFields,
 		],
 	};
 
@@ -186,6 +194,9 @@ export class Weaviate implements INodeType {
 				} else if (resource === 'backup') {
 					const { execute: executeBackup } = await import(`./operations/backup/${operation}`);
 					result = await executeBackup.call(this, i);
+				} else if (resource === 'tenant') {
+					const { execute: executeTenant } = await import(`./operations/tenant/${operation}`);
+					result = await executeTenant.call(this, i);
 				}
 
 				returnData.push(...result);

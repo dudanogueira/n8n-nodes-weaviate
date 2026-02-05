@@ -20,7 +20,12 @@ export async function execute(
 
 	try {
 		const properties = parseJsonSafe(propertiesJson, 'properties');
-		const collection = client.collections.get(collectionName);
+		let collection = client.collections.get(collectionName);
+
+		// If tenant is specified, use withTenant
+		if (additionalOptions.tenant) {
+			collection = collection.withTenant(additionalOptions.tenant);
+		}
 
 		const insertConfig: IDataObject = {
 			properties,
@@ -37,10 +42,6 @@ export async function execute(
 			insertConfig.id = objectId;
 		}
 
-		if (additionalOptions.tenant) {
-			insertConfig.tenant = additionalOptions.tenant;
-		}
-
 		const result = await collection.data.insert(insertConfig);
 
 		return [
@@ -49,9 +50,11 @@ export async function execute(
 					success: true,
 					id: result,
 					collectionName,
+					tenant: additionalOptions.tenant,
 					metadata: buildOperationMetadata('object:insert', {
 						collectionName,
 						objectId: result,
+						tenant: additionalOptions.tenant,
 					}),
 				},
 			},

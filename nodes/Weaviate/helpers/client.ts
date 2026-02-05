@@ -11,9 +11,41 @@ export async function getWeaviateClient(
 	// Build connection config based on connection type
 	const headers: Record<string, string> = {};
 
-	// Add API key if provided
+	// Add Weaviate API key if provided
 	if (credentials.weaviate_api_key) {
 		headers.Authorization = `Bearer ${credentials.weaviate_api_key}`;
+	}
+
+	// Load OpenAI credential if credential name is provided
+	if (credentials.openai_credential_name) {
+		try {
+			const openaiCred = await this.getCredentials(credentials.openai_credential_name);
+			const openaiApiKey = openaiCred.apiKey as string;
+			
+			if (openaiApiKey) {
+				headers['X-OpenAI-Api-Key'] = openaiApiKey;
+			}
+		} catch (error) {
+			// Log error but don't fail - credential might be optional
+			console.warn(`Failed to load OpenAI credential '${credentials.openai_credential_name}': ${(error as Error).message}`);
+		}
+	}
+
+	// Process custom headers JSON - these override everything above
+	if (credentials.custom_headers_json) {
+		try {
+			let customHeaders: Record<string, string>;
+			
+			if (typeof credentials.custom_headers_json === 'string') {
+				customHeaders = JSON.parse(credentials.custom_headers_json);
+			} else {
+				customHeaders = credentials.custom_headers_json as Record<string, string>;
+			}
+			
+			Object.assign(headers, customHeaders);
+		} catch (error) {
+			throw new Error(`Invalid JSON in custom headers: ${(error as Error).message}`);
+		}
 	}
 
 	let client: WeaviateClient;

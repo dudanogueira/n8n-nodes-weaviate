@@ -14,18 +14,6 @@ export const objectOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Insert',
-				value: 'insert',
-				description: 'Insert a single object',
-				action: 'Insert an object',
-			},
-			{
-				name: 'Insert Many',
-				value: 'insertMany',
-				description: 'Insert multiple objects in batch',
-				action: 'Insert many objects',
-			},
-			{
 				name: 'Delete by ID',
 				value: 'deleteById',
 				description: 'Delete an object by its ID',
@@ -36,6 +24,24 @@ export const objectOperations: INodeProperties[] = [
 				value: 'deleteMany',
 				description: 'Delete multiple objects using filters',
 				action: 'Delete many objects',
+			},
+			{
+				name: 'Get by ID',
+				value: 'getById',
+				description: 'Get an object by its ID',
+				action: 'Get an object by ID',
+			},
+			{
+				name: 'Insert',
+				value: 'insert',
+				description: 'Insert a single object',
+				action: 'Insert an object',
+			},
+			{
+				name: 'Insert Many',
+				value: 'insertMany',
+				description: 'Insert multiple objects in batch',
+				action: 'Insert many objects',
 			},
 		],
 		default: 'insert',
@@ -132,6 +138,23 @@ export const objectFields: INodeProperties[] = [
 		description: 'UUID of the object to delete',
 	},
 
+	// GET BY ID operation fields
+	{
+		displayName: 'Object ID',
+		name: 'objectId',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['object'],
+				operation: ['getById'],
+			},
+		},
+		default: '',
+		placeholder: '00000000-0000-0000-0000-000000000000',
+		description: 'UUID of the object to retrieve',
+	},
+
 	// DELETE MANY operation fields
 	{
 		displayName: 'Where Filter',
@@ -175,6 +198,18 @@ export const objectFields: INodeProperties[] = [
 			},
 		},
 		options: [
+			{
+				displayName: 'Include Vectors',
+				name: 'includeVectors',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to include vector embeddings in the response',
+				displayOptions: {
+					show: {
+						'/operation': ['getById'],
+					},
+				},
+			},
 			{
 				displayName: 'Tenant',
 				name: 'tenant',
