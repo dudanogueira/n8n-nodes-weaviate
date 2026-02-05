@@ -10,21 +10,38 @@ export async function execute(
 	const client = await getWeaviateClient.call(this, itemIndex);
 
 	try {
-		// Note: The SDK might not have a direct list method, so we may need to use REST API
-		// For now, we'll return a placeholder that indicates the operation would list backups
-		// This would need to be implemented using the REST API directly
-
-		return [
-			{
+		const backups = await client.backup.list(backend as never);
+		
+		// The response should be an array of backup objects
+		const backupArray = Array.isArray(backups) ? backups : [backups];
+		
+		// Return each backup as a separate item
+		const results: INodeExecutionData[] = backupArray.map((backup: any) => ({
+			json: {
+				backend,
+				id: backup.id,
+				status: backup.status,
+				path: backup.path,
+				...backup,
+				metadata: buildOperationMetadata('backup:list', { backend }),
+			},
+			pairedItem: { item: itemIndex },
+		}));
+		
+		// If no backups found, return empty result
+		if (results.length === 0) {
+			results.push({
 				json: {
 					backend,
-					message: 'List backups operation - implementation depends on Weaviate version',
-					metadata: buildOperationMetadata('backup:list', {
-						backend,
-					}),
+					message: 'No backups found',
+					backups: [],
+					metadata: buildOperationMetadata('backup:list', { backend }),
 				},
-			},
-		];
+				pairedItem: { item: itemIndex },
+			});
+		}
+
+		return results;
 	} finally {
 		await client.close();
 	}

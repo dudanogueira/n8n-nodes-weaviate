@@ -46,6 +46,11 @@ export class Weaviate implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Backup',
+						value: 'backup',
+						description: 'Manage backups',
+					},
+					{
 						name: 'Collection',
 						value: 'collection',
 						description: 'Manage collections (schemas)',
@@ -59,11 +64,6 @@ export class Weaviate implements INodeType {
 						name: 'Search',
 						value: 'search',
 						description: 'Search and query data',
-					},
-					{
-						name: 'Backup',
-						value: 'backup',
-						description: 'Manage backups',
 					},
 					{
 						name: 'Tenant',
@@ -92,14 +92,10 @@ export class Weaviate implements INodeType {
 				const client = await getWeaviateClient.call(this as unknown as IExecuteFunctions, 0);
 				try {
 					const collections = await client.collections.listAll();
-					console.log('=== DEBUG: listCollections ===');
-					console.log('Collections:', collections);
-					console.log('Keys:', Object.keys(collections));
 					const result = Object.keys(collections).map((name) => ({
 						name,
 						value: name,
 					}));
-					console.log('Result:', result);
 					return result;
 				} catch (error) {
 					throw new NodeOperationError(
@@ -119,12 +115,6 @@ export class Weaviate implements INodeType {
 				const client = await getWeaviateClient.call(this as unknown as IExecuteFunctions, 0);
 				try {
 					const collections = await client.collections.listAll();
-					console.log('=== DEBUG: listSearch.listCollections ===');
-					console.log('Collections type:', typeof collections);
-					console.log('Collections is array?', Array.isArray(collections));
-					console.log('Collections:', JSON.stringify(collections, null, 2));
-					console.log('Keys:', Object.keys(collections));
-					console.log('Filter:', filter);
 					
 					let collectionNames: string[];
 					
@@ -134,8 +124,6 @@ export class Weaviate implements INodeType {
 					} else {
 						collectionNames = Object.keys(collections);
 					}
-					
-					console.log('Collection names:', collectionNames);
 					
 					// Apply filter if provided
 					if (filter) {
@@ -152,13 +140,10 @@ export class Weaviate implements INodeType {
 						value: name,
 					}));
 					
-					console.log('Final results:', JSON.stringify(results, null, 2));
-					
 					return {
 						results,
 					};
 				} catch (error) {
-					console.error('=== ERROR in listCollections ===', error);
 					throw new NodeOperationError(
 						this.getNode(),
 						`Failed to list collections: ${(error as Error).message}`,

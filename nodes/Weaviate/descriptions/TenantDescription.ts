@@ -31,6 +31,12 @@ export const tenantOperations: INodeProperties[] = [
 				action: 'Check if tenant exists',
 			},
 			{
+				name: 'List',
+				value: 'list',
+				description: 'List all tenants and their status in a collection',
+				action: 'List all tenants',
+			},
+			{
 				name: 'Update Status',
 				value: 'updateStatus',
 				description: 'Update tenant status (active, inactive, frozen)',
@@ -74,7 +80,7 @@ export const tenantFields: INodeProperties[] = [
 		description: 'The collection to manage tenants in',
 	},
 
-	// Tenant name for all operations
+	// Tenant name for specific operations
 	{
 		displayName: 'Tenant Name',
 		name: 'tenantName',
