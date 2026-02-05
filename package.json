@@ -19,15 +19,18 @@
         "type": "git",
         "url": "https://github.com/dudanogueira/n8n-nodes-weaviate.git"
     },
-   "scripts": {
-		"build": "n8n-node build",
-		"build:watch": "tsc --watch",
-		"dev": "n8n-node dev",
-		"lint": "n8n-node lint",
-		"lint:fix": "n8n-node lint --fix",
-		"release": "n8n-node release",
-		"prepublishOnly": "n8n-node prerelease"
-	},
+    "scripts": {
+        "build": "n8n-node build",
+        "build:watch": "tsc --watch",
+        "dev": "n8n-node dev",
+        "lint": "n8n-node lint",
+        "lint:fix": "n8n-node lint --fix",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "release": "n8n-node release",
+        "prepublishOnly": "n8n-node prerelease"
+    },
     "files": [
         "dist"
     ],
@@ -40,10 +43,16 @@
     },
     "devDependencies": {
         "@n8n/node-cli": "*",
+        "@types/jest": "^30.0.0",
         "eslint": "9.32.0",
+        "jest": "^30.2.0",
+        "n8n-core": "^2.7.0",
+        "n8n-workflow": "^2.7.0",
         "prettier": "3.6.2",
         "release-it": "^19.0.4",
-        "typescript": "5.9.2"
+        "ts-jest": "^29.4.6",
+        "typescript": "5.9.2",
+        "weaviate-client": "^3.11.0"
     },
     "peerDependencies": {
         "n8n-workflow": "*"
