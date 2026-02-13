@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { parseJsonSafe, buildOperationMetadata, formatSearchResults, validateRequiredFields } from '../../helpers/utils';
 
 describe('Utils', () => {

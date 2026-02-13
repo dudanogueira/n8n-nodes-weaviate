@@ -6,6 +6,7 @@ import { Filters } from 'weaviate-client';
  * Builds a Weaviate filter using the collection's filter builder
  * Converts JSON filter format to Weaviate FilterValue objects
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildWeaviateFilter(collection: Collection<any>, filterJson: IDataObject): any {
 	// Handle composite filters (AND/OR)
 	if ('operator' in filterJson && filterJson.operator === 'And' && 'operands' in filterJson) {
@@ -159,7 +160,7 @@ export function buildOperationMetadata(operation: string, additionalData?: IData
 /**
  * Checks if a value is not empty (not null, undefined, empty object, or empty array)
  */
-export function isNotEmpty(value: any): boolean {
+export function isNotEmpty(value: unknown): boolean {
 	if (value === null || value === undefined) {
 		return false;
 	}

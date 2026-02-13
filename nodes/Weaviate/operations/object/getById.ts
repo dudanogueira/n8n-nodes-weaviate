@@ -42,7 +42,7 @@ export async function execute(
 
 		// Only include vectors if requested and not empty
 		if (additionalOptions.includeVectors && isNotEmpty(object?.vectors)) {
-			result.vectors = object.vectors;
+			result.vectors = object?.vectors;
 		}
 
 		return [

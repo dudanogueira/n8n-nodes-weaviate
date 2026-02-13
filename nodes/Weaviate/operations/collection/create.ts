@@ -22,7 +22,7 @@ export async function execute(
 	const config = await makeWeaviateRestRequest.call(this, itemIndex, {
 		method: 'GET',
 		path: `/schema/${(collectionConfig as IDataObject).class}`,
-	});
+	}) as IDataObject;
 
 	return [
 		{

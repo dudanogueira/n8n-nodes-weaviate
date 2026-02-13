@@ -4,14 +4,14 @@ import type { WeaviateCredentials } from './types';
 export interface RestRequestOptions {
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	path: string;
-	body?: any;
+	body?: unknown;
 }
 
 export async function makeWeaviateRestRequest(
 	this: IExecuteFunctions,
 	itemIndex: number,
 	options: RestRequestOptions,
-): Promise<any> {
+): Promise<unknown> {
 	const credentials = (await this.getCredentials('weaviateApi', itemIndex)) as WeaviateCredentials;
 
 	// Build base URL

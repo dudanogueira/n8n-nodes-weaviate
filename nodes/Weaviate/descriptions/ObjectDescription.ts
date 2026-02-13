@@ -123,8 +123,8 @@ export const objectFields: INodeProperties[] = [
 			},
 		},
 		default: '[]',
-		placeholder: '[\n  {\n    "properties": {"title": "First Article", "content": "Content here"},\n    "vectors": [0.1, 0.2, 0.3]\n  },\n  {\n    "properties": {"title": "Second Article", "content": "More content"},\n    "id": "custom-uuid-123"\n  }\n]',
-		description: 'Array of objects to insert. Each object must have "properties". Optional: "vectors" (array of numbers) and "id" (custom UUID).',
+		placeholder: '[\n  {\n    "properties": {"title": "First Article", "content": "Content here"},\n    "vectors": [0.1, 0.2, 0.3]\n  },\n  {\n    "properties": {"title": "Second Article", "content": "More content"},\n    "ID": "custom-uuid-123"\n  }\n]',
+		description: 'Array of objects to insert. Each object must have "properties". Optional: "vectors" (array of numbers) and "ID" (custom UUID).',
 	},
 
 	// DELETE BY ID operation fields
@@ -165,7 +165,6 @@ export const objectFields: INodeProperties[] = [
 		displayName: 'Limit',
 		name: 'limit',
 		type: 'number',
-		required: false,
 		displayOptions: {
 			show: {
 				resource: ['object'],
@@ -177,7 +176,7 @@ export const objectFields: INodeProperties[] = [
 			minValue: 1,
 			maxValue: 10000,
 		},
-		description: 'Maximum number of objects to return',
+		description: 'Max number of results to return',
 	},
 
 
@@ -225,6 +224,43 @@ export const objectFields: INodeProperties[] = [
 		},
 		options: [
 			{
+				displayName: 'Filters',
+				name: 'whereFilter',
+				type: 'json',
+				default: '',
+				placeholder: '{"path": ["status"], "operator": "Equal", "valueText": "active"}',
+				description: 'Filter to select objects. See <a href="https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstoreweaviate/#search-filters" target="_blank">filter documentation</a>.',
+				displayOptions: {
+					show: {
+						'/operation': ['getMany'],
+					},
+				},
+			},
+			{
+				displayName: 'Include Vectors',
+				name: 'includeVectors',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to include vector embeddings in the response',
+				displayOptions: {
+					show: {
+						'/operation': ['getMany'],
+					},
+				},
+			},
+			{
+				displayName: 'Include Vectors',
+				name: 'includeVectors',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to include vector embeddings in the response',
+				displayOptions: {
+					show: {
+						'/operation': ['getById'],
+					},
+				},
+			},
+			{
 				displayName: 'Offset',
 				name: 'offset',
 				type: 'number',
@@ -237,12 +273,11 @@ export const objectFields: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Filters',
-				name: 'whereFilter',
-				type: 'json',
-				default: '',
-				placeholder: '{"path": ["status"], "operator": "Equal", "valueText": "active"}',
-				description: 'Filter to select objects. See <a href="https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstoreweaviate/#search-filters" target="_blank">filter documentation</a>.',
+				displayName: 'Return Creation Time',
+				name: 'returnCreationTime',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to return object creation timestamp',
 				displayOptions: {
 					show: {
 						'/operation': ['getMany'],
@@ -263,30 +298,6 @@ export const objectFields: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Include Vectors',
-				name: 'includeVectors',
-				type: 'boolean',
-				default: false,
-				description: 'Whether to include vector embeddings in the response',
-				displayOptions: {
-					show: {
-						'/operation': ['getMany'],
-					},
-				},
-			},
-			{
-				displayName: 'Return Creation Time',
-				name: 'returnCreationTime',
-				type: 'boolean',
-				default: false,
-				description: 'Whether to return object creation timestamp',
-				displayOptions: {
-					show: {
-						'/operation': ['getMany'],
-					},
-				},
-			},
-			{
 				displayName: 'Return Update Time',
 				name: 'returnUpdateTime',
 				type: 'boolean',
@@ -295,18 +306,6 @@ export const objectFields: INodeProperties[] = [
 				displayOptions: {
 					show: {
 						'/operation': ['getMany'],
-					},
-				},
-			},
-			{
-				displayName: 'Include Vectors',
-				name: 'includeVectors',
-				type: 'boolean',
-				default: false,
-				description: 'Whether to include vector embeddings in the response',
-				displayOptions: {
-					show: {
-						'/operation': ['getById'],
 					},
 				},
 			},

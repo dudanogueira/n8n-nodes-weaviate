@@ -191,8 +191,11 @@ export const collectionFields: INodeProperties[] = [
 				displayName: 'Limit',
 				name: 'limit',
 				type: 'number',
-				default: 100,
-				description: 'Maximum number of objects to aggregate',
+				typeOptions: {
+					minValue: 1,
+				},
+				default: 50,
+				description: 'Max number of results to return',
 			},
 			{
 				displayName: 'Filters (JSON)',

@@ -42,7 +42,6 @@ export async function execute(
 		if (objectId) {
 			insertConfig.id = objectId;
 		}
-		console.log('Insert Config:', insertConfig);
 		const result = await collection.data.insert(insertConfig);
 
 		return [

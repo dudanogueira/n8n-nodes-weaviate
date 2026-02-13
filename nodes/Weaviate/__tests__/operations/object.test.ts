@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IExecuteFunctions } from 'n8n-workflow';
+import { Filters } from 'weaviate-client';
 import { execute as insertExecute } from '../../operations/object/insert';
 import { execute as insertManyExecute } from '../../operations/object/insertMany';
 import { execute as getByIdExecute } from '../../operations/object/getById';
 import { execute as deleteByIdExecute } from '../../operations/object/deleteById';
 import { execute as deleteManyExecute } from '../../operations/object/deleteMany';
 import { execute as getManyExecute } from '../../operations/object/getMany';
+import { buildWeaviateFilter } from '../../helpers/utils';
 
 // Mock do cliente Weaviate
 const mockClose = jest.fn();
@@ -386,8 +389,6 @@ describe('Weaviate Object Operations', () => {
 		});
 
 		it('should build complex nested filter identical to manual construction', () => {
-			const { Filters } = require('weaviate-client');
-			const { buildWeaviateFilter } = require('../../helpers/utils');
 
 			// Create a real mock collection with actual filter builders
 			const testMockCollection = {
@@ -409,10 +410,10 @@ describe('Weaviate Object Operations', () => {
 			//   )
 			// );
 			const manualFilter = Filters.and(
-				testMockCollection.filter.byProperty('status').notEqual('archived'),
+				testMockCollection.filter.byProperty('status').notEqual('archived') as any,
 				Filters.or(
-					testMockCollection.filter.byProperty('rating').greaterOrEqual(4.5),
-					testMockCollection.filter.byProperty('price').lessThan(30),
+					testMockCollection.filter.byProperty('rating').greaterOrEqual(4.5) as any,
+					testMockCollection.filter.byProperty('price').lessThan(30) as any,
 				),
 			);
 
@@ -443,7 +444,7 @@ describe('Weaviate Object Operations', () => {
 				],
 			};
 
-			const builtFilter = buildWeaviateFilter(testMockCollection, filterJson);
+			const builtFilter = buildWeaviateFilter(testMockCollection as any, filterJson);
 
 			// 3. Verify they produce identical structures
 			expect(JSON.stringify(builtFilter)).toEqual(JSON.stringify(manualFilter));

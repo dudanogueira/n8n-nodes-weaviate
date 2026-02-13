@@ -1,4 +1,4 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { buildOperationMetadata } from '../../helpers/utils';
 import { makeWeaviateRestRequest } from '../../helpers/rest';
 
@@ -12,7 +12,7 @@ export async function execute(
 	const config = await makeWeaviateRestRequest.call(this, itemIndex, {
 		method: 'GET',
 		path: `/schema/${collectionName}`,
-	});
+	}) as IDataObject;
 
 	return [
 		{

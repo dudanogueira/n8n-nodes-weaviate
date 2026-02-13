@@ -80,6 +80,7 @@ export async function execute(
 			returnMetadata.push('creationTime');
 		}
 		if (returnMetadata.length > 0) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			queryOptions.returnMetadata = returnMetadata as any;
 		}
 

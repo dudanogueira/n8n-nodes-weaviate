@@ -41,8 +41,6 @@ export async function execute(
 
 		if (additionalOptions.whereFilter) {
 			const filterJson = parseJsonSafe(additionalOptions.whereFilter, 'whereFilter');
-			// eslint-disable-next-line no-console
-			console.log('Parsed whereFilter JSON:', JSON.stringify(filterJson, null, 2));
 			// Build the filter using Weaviate's filter builder
 			queryOptions.filters = buildWeaviateFilter(collection, filterJson);
 		}
@@ -66,6 +64,7 @@ export async function execute(
 			returnMetadata.push('updateTime');
 		}
 		if (returnMetadata.length > 0) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			queryOptions.returnMetadata = returnMetadata as any;
 		}
 

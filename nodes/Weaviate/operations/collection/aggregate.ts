@@ -30,6 +30,7 @@ export async function execute(
 		// Check if group by is requested
 		if (additionalOptions.groupBy) {
 			// Group by aggregation
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const groupByOptions: any = {
 				groupBy: { property: additionalOptions.groupBy },
 			};
@@ -56,6 +57,7 @@ export async function execute(
 			];
 		} else {
 			// Simple count aggregation
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const options: any = {};
 
 			if (additionalOptions.limit) {

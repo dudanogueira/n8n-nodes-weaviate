@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { IExecuteFunctions } from 'n8n-workflow';
 import { execute as createExecute } from '../../operations/backup/create';
 import { execute as getCreateStatusExecute } from '../../operations/backup/getCreateStatus';
@@ -44,7 +45,7 @@ describe('Weaviate Backup Operations', () => {
 	describe('create', () => {
 		beforeEach(() => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 'filesystem';
 					if (parameterName === 'backupId') return 'backup-123';
 					if (parameterName === 'includeCollections') return '';
@@ -84,7 +85,7 @@ describe('Weaviate Backup Operations', () => {
 
 		it('should create backup with includeCollections', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 'filesystem';
 					if (parameterName === 'backupId') return 'backup-123';
 					if (parameterName === 'includeCollections') return 'Collection1, Collection2, Collection3';
@@ -107,7 +108,7 @@ describe('Weaviate Backup Operations', () => {
 
 		it('should create backup with excludeCollections', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 'filesystem';
 					if (parameterName === 'backupId') return 'backup-456';
 					if (parameterName === 'includeCollections') return '';
@@ -130,7 +131,7 @@ describe('Weaviate Backup Operations', () => {
 
 		it('should create backup without waiting for completion', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 'filesystem';
 					if (parameterName === 'backupId') return 'backup-789';
 					if (parameterName === 'includeCollections') return '';
@@ -160,7 +161,7 @@ describe('Weaviate Backup Operations', () => {
 
 		it('should create backup with both include and exclude collections', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 's3';
 					if (parameterName === 'backupId') return 'backup-mixed';
 					if (parameterName === 'includeCollections') return 'Important1, Important2';
@@ -398,7 +399,7 @@ describe('Weaviate Backup Operations', () => {
 	describe('restore', () => {
 		beforeEach(() => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 'filesystem';
 					if (parameterName === 'backupId') return 'backup-123';
 					if (parameterName === 'includeCollections') return '';
@@ -437,7 +438,7 @@ describe('Weaviate Backup Operations', () => {
 
 		it('should restore backup with includeCollections', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 'filesystem';
 					if (parameterName === 'backupId') return 'backup-123';
 					if (parameterName === 'includeCollections') return 'Collection1, Collection2';
@@ -460,7 +461,7 @@ describe('Weaviate Backup Operations', () => {
 
 		it('should restore backup with excludeCollections', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 'filesystem';
 					if (parameterName === 'backupId') return 'backup-456';
 					if (parameterName === 'includeCollections') return '';
@@ -483,7 +484,7 @@ describe('Weaviate Backup Operations', () => {
 
 		it('should restore backup without waiting for completion', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 'filesystem';
 					if (parameterName === 'backupId') return 'backup-789';
 					if (parameterName === 'includeCollections') return '';
@@ -513,7 +514,7 @@ describe('Weaviate Backup Operations', () => {
 
 		it('should restore backup with both include and exclude collections', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
-				(parameterName: string, _itemIndex: number, defaultValue?: unknown) => {
+				(parameterName: string, itemIndex: number, defaultValue?: unknown) => {
 					if (parameterName === 'backend') return 's3';
 					if (parameterName === 'backupId') return 'backup-selective';
 					if (parameterName === 'includeCollections') return 'UserData, Products';

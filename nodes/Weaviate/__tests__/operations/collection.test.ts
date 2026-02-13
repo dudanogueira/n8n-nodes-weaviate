@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IExecuteFunctions } from 'n8n-workflow';
 import { execute as createExecute } from '../../operations/collection/create';
 import { execute as deleteExecute } from '../../operations/collection/delete';
