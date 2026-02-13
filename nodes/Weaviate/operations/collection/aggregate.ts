@@ -29,7 +29,8 @@ export async function execute(
 
 		// Check if group by is requested
 		if (additionalOptions.groupBy) {
-			// Group by aggregation
+			// Group by aggregation - using 'any' because we're dynamically building
+			// AggregateGroupByOptions which requires generic type parameters we don't have at compile time
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const groupByOptions: any = {
 				groupBy: { property: additionalOptions.groupBy },
@@ -56,7 +57,8 @@ export async function execute(
 				},
 			];
 		} else {
-			// Simple count aggregation
+			// Simple count aggregation - using 'any' because we're dynamically building
+			// AggregateOverAllOptions which requires generic type parameters we don't have at compile time
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const options: any = {};
 

@@ -1,5 +1,6 @@
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
+import type { QueryMetadata } from 'weaviate-client';
 import { buildOperationMetadata, parseJsonSafe, isNotEmpty } from '../../helpers/utils';
 
 export async function execute(
@@ -76,7 +77,7 @@ export async function execute(
 		}
 
 		// Handle metadata returns
-		const returnMetadata: string[] = [];
+		const returnMetadata: (keyof import('weaviate-client').Metadata)[] = [];
 		if (additionalOptions.returnDistance) {
 			returnMetadata.push('distance');
 		}
@@ -84,8 +85,7 @@ export async function execute(
 			returnMetadata.push('creationTime');
 		}
 		if (returnMetadata.length > 0) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			queryOptions.returnMetadata = returnMetadata as any;
+			queryOptions.returnMetadata = returnMetadata as QueryMetadata;
 		}
 
 		// Handle advanced options

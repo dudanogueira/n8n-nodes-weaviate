@@ -5,6 +5,11 @@ import { Filters } from 'weaviate-client';
 /**
  * Builds a Weaviate filter using the collection's filter builder
  * Converts JSON filter format to Weaviate FilterValue objects
+ *
+ * Note: Uses 'any' type because:
+ * 1. Collection<any> is needed to work with collections of any schema type
+ * 2. Return type varies based on the filter structure (FilterValue with different operators)
+ * 3. This is a bridge function between JSON input and Weaviate's typed filter API
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildWeaviateFilter(collection: Collection<any>, filterJson: IDataObject): any {
