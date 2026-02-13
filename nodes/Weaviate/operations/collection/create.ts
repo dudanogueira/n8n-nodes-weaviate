@@ -1,6 +1,6 @@
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
-import { getWeaviateClient } from '../../helpers/client';
 import { buildOperationMetadata, parseJsonSafe } from '../../helpers/utils';
+import { makeWeaviateRestRequest } from '../../helpers/rest';
 
 export async function execute(
 	this: IExecuteFunctions,
@@ -8,30 +8,30 @@ export async function execute(
 ): Promise<INodeExecutionData[]> {
 	const collectionConfigJson = this.getNodeParameter('collectionConfig', itemIndex) as string;
 
-	const client = await getWeaviateClient.call(this, itemIndex);
+	// Parse the collection configuration JSON
+	const collectionConfig = parseJsonSafe(collectionConfigJson, 'collectionConfig');
 
-	try {
-		// Parse the collection configuration JSON
-		const collectionConfig = parseJsonSafe(collectionConfigJson, 'collectionConfig');
+	// Create the collection using direct REST API call (POST /schema)
+	await makeWeaviateRestRequest.call(this, itemIndex, {
+		method: 'POST',
+		path: '/schema',
+		body: collectionConfig,
+	});
 
-		// Create the collection
-		await client.collections.create(collectionConfig as never);
-		
-		// Get the created collection config
-		const collection = client.collections.get((collectionConfig as IDataObject).name as string);
-		const config = await collection.config.get();
+	// Get the created collection config using direct REST API call (GET /schema/{className})
+	const config = await makeWeaviateRestRequest.call(this, itemIndex, {
+		method: 'GET',
+		path: `/schema/${(collectionConfig as IDataObject).class}`,
+	});
 
-		return [
-			{
-				json: {
-					success: true,
-					collectionName: (collectionConfig as IDataObject).name,
-					collection: config,
-					metadata: buildOperationMetadata('collection:create', { collectionName: (collectionConfig as IDataObject).name }),
-				},
+	return [
+		{
+			json: {
+				success: true,
+				collectionName: (collectionConfig as IDataObject).class,
+				collection: config,
+				metadata: buildOperationMetadata('collection:create', { collectionName: (collectionConfig as IDataObject).class }),
 			},
-		];
-	} finally {
-		await client.close();
-	}
+		},
+	];
 }

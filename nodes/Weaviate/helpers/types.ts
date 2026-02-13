@@ -10,7 +10,6 @@ export interface WeaviateCredentials {
 	custom_connection_grpc_host?: string;
 	custom_connection_grpc_port?: number;
 	custom_connection_grpc_secure?: boolean;
-	openai_credential_name?: string;
 	custom_headers_json?: string | IDataObject;
 }
 

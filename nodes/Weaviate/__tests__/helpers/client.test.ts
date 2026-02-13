@@ -22,8 +22,23 @@ jest.mock('weaviate-client', () => {
 describe('Weaviate Client Helper', () => {
 	let executeFunctions: IExecuteFunctions;
 	let mockGetCredentials: jest.Mock;
+	let originalEnv: NodeJS.ProcessEnv;
 
 	beforeEach(() => {
+		// Save and clear environment variables
+		originalEnv = process.env;
+		process.env = { ...originalEnv };
+		// Clear all model provider API key environment variables
+		delete process.env.OPENAI_APIKEY;
+		delete process.env.COHERE_APIKEY;
+		delete process.env.HUGGINGFACE_APIKEY;
+		delete process.env.ANTHROPIC_APIKEY;
+		delete process.env.ANTHROPIC_BASEURL;
+		delete process.env.AWS_ACCESS_KEY;
+		delete process.env.AWS_SECRET_KEY;
+		delete process.env.VERTEX_APIKEY;
+		delete process.env.GOOGLE_STUDIO_APIKEY;
+
 		jest.clearAllMocks();
 		mockConnectToCustom.mockResolvedValue(mockClient);
 
@@ -31,6 +46,11 @@ describe('Weaviate Client Helper', () => {
 		executeFunctions = {
 			getCredentials: mockGetCredentials,
 		} as unknown as IExecuteFunctions;
+	});
+
+	afterEach(() => {
+		// Restore environment variables
+		process.env = originalEnv;
 	});
 
 	describe('Weaviate Cloud Connection', () => {
@@ -94,54 +114,6 @@ describe('Weaviate Client Helper', () => {
 			);
 		});
 
-		it('should create cloud connection with OpenAI credentials', async () => {
-			const credentials: WeaviateCredentials = {
-				connection_type: 'weaviate_cloud',
-				weaviate_cloud_endpoint: 'my-cluster.weaviate.network',
-				weaviate_api_key: 'test-api-key',
-				openai_credential_name: 'openaiApi',
-			};
-
-			mockGetCredentials
-				.mockResolvedValueOnce(credentials)
-				.mockResolvedValueOnce({ apiKey: 'openai-key-123' });
-
-			await getWeaviateClient.call(executeFunctions, 0);
-
-			expect(mockGetCredentials).toHaveBeenCalledWith('weaviateApi', 0);
-			expect(mockGetCredentials).toHaveBeenCalledWith('openaiApi');
-			expect(mockConnectToCustom).toHaveBeenCalledWith(
-				expect.objectContaining({
-					headers: {
-						Authorization: 'Bearer test-api-key',
-						'X-OpenAI-Api-Key': 'openai-key-123',
-					},
-				}),
-			);
-		});
-
-		it('should handle missing OpenAI credentials gracefully', async () => {
-			const credentials: WeaviateCredentials = {
-				connection_type: 'weaviate_cloud',
-				weaviate_cloud_endpoint: 'my-cluster.weaviate.network',
-				weaviate_api_key: 'test-api-key',
-				openai_credential_name: 'openaiApi',
-			};
-
-			mockGetCredentials
-				.mockResolvedValueOnce(credentials)
-				.mockRejectedValueOnce(new Error('Credential not found'));
-
-			await getWeaviateClient.call(executeFunctions, 0);
-
-			expect(mockConnectToCustom).toHaveBeenCalledWith(
-				expect.objectContaining({
-					headers: {
-						Authorization: 'Bearer test-api-key',
-					},
-				}),
-			);
-		});
 
 		it('should apply custom headers from JSON string', async () => {
 			const credentials: WeaviateCredentials = {
@@ -222,6 +194,51 @@ describe('Weaviate Client Helper', () => {
 				}),
 			);
 		});
+
+		it('should include headers from environment variables', async () => {
+			process.env.OPENAI_APIKEY = 'env-openai-key';
+			process.env.COHERE_APIKEY = 'env-cohere-key';
+
+			const credentials: WeaviateCredentials = {
+				connection_type: 'weaviate_cloud',
+				weaviate_cloud_endpoint: 'my-cluster.weaviate.network',
+			};
+
+			mockGetCredentials.mockResolvedValue(credentials);
+
+			await getWeaviateClient.call(executeFunctions, 0);
+
+			expect(mockConnectToCustom).toHaveBeenCalledWith(
+				expect.objectContaining({
+					headers: {
+						'X-OpenAI-Api-Key': 'env-openai-key',
+						'X-Cohere-Api-Key': 'env-cohere-key',
+					},
+				}),
+			);
+		});
+
+		it('should allow custom headers to override environment variables', async () => {
+			process.env.OPENAI_APIKEY = 'env-openai-key';
+
+			const credentials: WeaviateCredentials = {
+				connection_type: 'weaviate_cloud',
+				weaviate_cloud_endpoint: 'my-cluster.weaviate.network',
+				custom_headers_json: '{"X-OpenAI-Api-Key": "custom-openai-key"}',
+			};
+
+			mockGetCredentials.mockResolvedValue(credentials);
+
+			await getWeaviateClient.call(executeFunctions, 0);
+
+			expect(mockConnectToCustom).toHaveBeenCalledWith(
+				expect.objectContaining({
+					headers: {
+						'X-OpenAI-Api-Key': 'custom-openai-key',
+					},
+				}),
+			);
+		});
 	});
 
 	describe('Custom Connection', () => {
@@ -296,27 +313,6 @@ describe('Weaviate Client Helper', () => {
 			});
 		});
 
-		it('should create custom connection with OpenAI credentials', async () => {
-			const credentials: WeaviateCredentials = {
-				connection_type: 'custom_connection',
-				custom_connection_http_host: 'localhost',
-				openai_credential_name: 'openaiApi',
-			};
-
-			mockGetCredentials
-				.mockResolvedValueOnce(credentials)
-				.mockResolvedValueOnce({ apiKey: 'openai-custom-key' });
-
-			await getWeaviateClient.call(executeFunctions, 0);
-
-			expect(mockConnectToCustom).toHaveBeenCalledWith(
-				expect.objectContaining({
-					headers: {
-						'X-OpenAI-Api-Key': 'openai-custom-key',
-					},
-				}),
-			);
-		});
 
 		it('should create custom connection with custom headers', async () => {
 			const credentials: WeaviateCredentials = {

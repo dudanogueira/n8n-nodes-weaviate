@@ -1,28 +1,26 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { getWeaviateClient } from '../../helpers/client';
 import { buildOperationMetadata } from '../../helpers/utils';
+import { makeWeaviateRestRequest } from '../../helpers/rest';
 
 export async function execute(
 	this: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<INodeExecutionData[]> {
 	const collectionName = this.getNodeParameter('collectionName', itemIndex) as string;
-	const client = await getWeaviateClient.call(this, itemIndex);
 
-	try {
-		const collection = client.collections.get(collectionName);
-		const config = await collection.config.get();
+	// Get collection config using direct REST API call (GET /schema/{className})
+	const config = await makeWeaviateRestRequest.call(this, itemIndex, {
+		method: 'GET',
+		path: `/schema/${collectionName}`,
+	});
 
-		return [
-			{
-				json: {
-					collectionName,
-					config,
-					metadata: buildOperationMetadata('collection:get', { collectionName }),
-				},
+	return [
+		{
+			json: {
+				collectionName,
+				config,
+				metadata: buildOperationMetadata('collection:get', { collectionName }),
 			},
-		];
-	} finally {
-		await client.close();
-	}
+		},
+	];
 }

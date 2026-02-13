@@ -126,6 +126,27 @@ describe('Weaviate Object Operations', () => {
 			);
 		});
 
+		it('should not send empty vector array (allows auto-vectorization)', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'properties') return '{"name": "Test"}';
+					if (parameterName === 'vector') return '[]';
+					if (parameterName === 'objectId') return '';
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			await insertExecute.call(executeFunctions, 0);
+
+			expect(mockInsert).toHaveBeenCalledWith(
+				expect.not.objectContaining({
+					vectors: expect.anything(),
+				}),
+			);
+		});
+
 		it('should insert object with tenant', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
 				(parameterName: string) => {

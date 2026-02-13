@@ -87,7 +87,7 @@ export const objectFields: INodeProperties[] = [
 		},
 		default: '',
 		placeholder: '[0.1, 0.2, 0.3, ...]',
-		description: 'Vector embedding as JSON array. Leave empty to use collection vectorizer.',
+		description: 'Optional: Vector embedding as JSON array. Leave empty to use collection vectorizer or auto-generate.',
 	},
 	{
 		displayName: 'Object ID',
@@ -101,7 +101,7 @@ export const objectFields: INodeProperties[] = [
 		},
 		default: '',
 		placeholder: '00000000-0000-0000-0000-000000000000',
-		description: 'Optional UUID for the object. If not provided, one will be generated.',
+		description: 'Optional: Custom UUID for the object. Leave empty to auto-generate a unique ID.',
 	},
 
 	// INSERT MANY operation fields
@@ -216,7 +216,7 @@ export const objectFields: INodeProperties[] = [
 				type: 'string',
 				default: '',
 				placeholder: 'tenant-name',
-				description: 'Tenant name for multi-tenancy support',
+				description: 'Optional: Tenant name for multi-tenancy support. Leave empty if not using multi-tenancy.',
 			},
 		],
 	},

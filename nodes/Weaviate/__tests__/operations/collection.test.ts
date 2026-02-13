@@ -7,26 +7,26 @@ import { execute as listExecute } from '../../operations/collection/list';
 
 // Mock do cliente Weaviate
 const mockClose = jest.fn();
-const mockConfigGet = jest.fn();
-const mockCollectionsCreate = jest.fn();
 const mockCollectionsDelete = jest.fn();
 const mockCollectionsExists = jest.fn();
 const mockCollectionsListAll = jest.fn();
-const mockCollectionsGet = jest.fn(() => ({
-	config: {
-		get: mockConfigGet,
-	},
+
+// Mock REST API helper
+const mockMakeWeaviateRestRequest = jest.fn();
+
+jest.mock('../../helpers/rest', () => ({
+	makeWeaviateRestRequest: jest.fn(async function (this: IExecuteFunctions, itemIndex: number, options: any) {
+		return mockMakeWeaviateRestRequest(options);
+	}),
 }));
 
 jest.mock('../../helpers/client', () => ({
 	getWeaviateClient: jest.fn(async function (this: IExecuteFunctions) {
 		return {
 			collections: {
-				create: mockCollectionsCreate,
 				delete: mockCollectionsDelete,
 				exists: mockCollectionsExists,
 				listAll: mockCollectionsListAll,
-				get: mockCollectionsGet,
 			},
 			close: mockClose,
 		};
@@ -44,7 +44,7 @@ describe('Weaviate Collection Operations', () => {
 			getNodeParameter: jest.fn((parameterName: string) => {
 				if (parameterName === 'collectionConfig') {
 					return JSON.stringify({
-						name: 'TestCollection',
+						class: 'TestCollection',
 						vectorizers: {
 							default: {
 								vectorizer: 'text2vec-openai',
@@ -56,14 +56,19 @@ describe('Weaviate Collection Operations', () => {
 			}),
 		} as unknown as IExecuteFunctions;
 
-		// Mock da resposta do config.get()
-		mockConfigGet.mockResolvedValue({
-			name: 'TestCollection',
-			vectorizers: {
-				default: {
-					vectorizer: 'text2vec-openai',
-				},
-			},
+		// Mock da resposta do REST API
+		mockMakeWeaviateRestRequest.mockImplementation((options: any) => {
+			if (options.method === 'GET' && options.path.includes('/schema/')) {
+				return Promise.resolve({
+					class: 'TestCollection',
+					vectorizers: {
+						default: {
+							vectorizer: 'text2vec-openai',
+						},
+					},
+				});
+			}
+			return Promise.resolve(null);
 		});
 	});
 
@@ -71,13 +76,24 @@ describe('Weaviate Collection Operations', () => {
 		it('should create a collection successfully', async () => {
 			const result = await createExecute.call(executeFunctions, 0);
 
-			expect(mockCollectionsCreate).toHaveBeenCalledWith({
-				name: 'TestCollection',
-				vectorizers: {
-					default: {
-						vectorizer: 'text2vec-openai',
+			// Verify POST /schema was called
+			expect(mockMakeWeaviateRestRequest).toHaveBeenCalledWith({
+				method: 'POST',
+				path: '/schema',
+				body: {
+					class: 'TestCollection',
+					vectorizers: {
+						default: {
+							vectorizer: 'text2vec-openai',
+						},
 					},
 				},
+			});
+
+			// Verify GET /schema/{className} was called
+			expect(mockMakeWeaviateRestRequest).toHaveBeenCalledWith({
+				method: 'GET',
+				path: '/schema/TestCollection',
 			});
 
 			expect(result).toHaveLength(1);
@@ -85,22 +101,18 @@ describe('Weaviate Collection Operations', () => {
 				success: true,
 				collectionName: 'TestCollection',
 			});
-
-			expect(mockClose).toHaveBeenCalled();
 		});
 
 		it('should handle invalid JSON configuration', async () => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockReturnValue('invalid json');
 
 			await expect(createExecute.call(executeFunctions, 0)).rejects.toThrow();
-			expect(mockClose).toHaveBeenCalled();
 		});
 
-		it('should close client even if creation fails', async () => {
-			mockCollectionsCreate.mockRejectedValue(new Error('Creation failed'));
+		it('should handle creation failures', async () => {
+			mockMakeWeaviateRestRequest.mockRejectedValue(new Error('Creation failed'));
 
 			await expect(createExecute.call(executeFunctions, 0)).rejects.toThrow('Creation failed');
-			expect(mockClose).toHaveBeenCalled();
 		});
 	});
 
@@ -175,29 +187,24 @@ describe('Weaviate Collection Operations', () => {
 	describe('get', () => {
 		beforeEach(() => {
 			(executeFunctions.getNodeParameter as jest.Mock).mockReturnValue('TestCollection');
-			mockConfigGet.mockResolvedValue({
-				name: 'TestCollection',
-				vectorizers: {
-					default: {
-						vectorizer: 'text2vec-openai',
-					},
-				},
-			});
 		});
 
 		it('should get collection configuration', async () => {
 			const result = await getExecute.call(executeFunctions, 0);
 
-			expect(mockCollectionsGet).toHaveBeenCalledWith('TestCollection');
-			expect(mockConfigGet).toHaveBeenCalled();
+			// Verify GET /schema/{className} was called
+			expect(mockMakeWeaviateRestRequest).toHaveBeenCalledWith({
+				method: 'GET',
+				path: '/schema/TestCollection',
+			});
+
 			expect(result).toHaveLength(1);
 			expect(result[0].json).toMatchObject({
 				collectionName: 'TestCollection',
 				config: {
-					name: 'TestCollection',
+					class: 'TestCollection',
 				},
 			});
-			expect(mockClose).toHaveBeenCalled();
 		});
 	});
 

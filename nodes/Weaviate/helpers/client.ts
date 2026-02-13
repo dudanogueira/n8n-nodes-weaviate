@@ -11,23 +11,53 @@ export async function getWeaviateClient(
 	// Build connection config based on connection type
 	const headers: Record<string, string> = {};
 
+	/**
+	 * Automatically map environment variables to HTTP headers for model providers.
+	 *
+	 * This allows you to set API keys via environment variables instead of storing them in credentials.
+	 * The environment variables will be automatically added as headers when creating the Weaviate client.
+	 *
+	 * Example usage:
+	 *   export OPENAI_APIKEY="sk-..."
+	 *   export COHERE_APIKEY="..."
+	 *   export ANTHROPIC_APIKEY="..."
+	 *
+	 * Documentation: https://docs.weaviate.io/weaviate/model-providers
+	 *
+	 * Priority order (lowest to highest):
+	 *   1. Environment variables (this mapping)
+	 *   2. Weaviate API key credential
+	 *   3. Custom headers JSON (overrides all)
+	 */
+	const envVarToHeaderMapping: Record<string, string> = {
+		// OpenAI
+		OPENAI_APIKEY: 'X-OpenAI-Api-Key',
+		// Cohere
+		COHERE_APIKEY: 'X-Cohere-Api-Key',
+		// HuggingFace
+		HUGGINGFACE_APIKEY: 'X-HuggingFace-Api-Key',
+		// Anthropic
+		ANTHROPIC_APIKEY: 'X-Anthropic-Api-Key',
+		ANTHROPIC_BASEURL: 'X-Anthropic-Baseurl',
+		// AWS
+		AWS_ACCESS_KEY: 'X-AWS-Access-Key',
+		AWS_SECRET_KEY: 'X-AWS-Secret-Key',
+		// Google Vertex AI
+		VERTEX_APIKEY: 'X-Vertex-Api-Key',
+		// Google Gemini API
+		GOOGLE_STUDIO_APIKEY: 'X-Studio-Api-Key',
+	};
+
+	// Check for API keys from environment variables
+	for (const [envVar, headerName] of Object.entries(envVarToHeaderMapping)) {
+		if (process.env[envVar]) {
+			headers[headerName] = process.env[envVar] as string;
+		}
+	}
+
 	// Add Weaviate API key if provided
 	if (credentials.weaviate_api_key) {
 		headers.Authorization = `Bearer ${credentials.weaviate_api_key}`;
-	}
-
-	// Load OpenAI credential if credential name is provided
-	if (credentials.openai_credential_name) {
-		try {
-			const openaiCred = await this.getCredentials(credentials.openai_credential_name);
-			const openaiApiKey = openaiCred.apiKey as string;
-			
-			if (openaiApiKey) {
-				headers['X-OpenAI-Api-Key'] = openaiApiKey;
-			}
-		} catch {
-			// Credential might be optional - silently continue if not found
-		}
 	}
 
 	// Process custom headers JSON - these override everything above
