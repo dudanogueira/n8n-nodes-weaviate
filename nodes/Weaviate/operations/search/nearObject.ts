@@ -9,7 +9,7 @@ export async function execute(
 	const collectionName = this.getNodeParameter('collection', itemIndex, '', {
 		extractValue: true,
 	}) as string;
-	const queryVectorJson = this.getNodeParameter('queryVector', itemIndex) as string;
+	const objectId = this.getNodeParameter('objectId', itemIndex) as string;
 	const limit = this.getNodeParameter('limit', itemIndex, 10) as number;
 	const additionalOptions = this.getNodeParameter('additionalOptions', itemIndex, {}) as {
 		offset?: number;
@@ -29,10 +29,8 @@ export async function execute(
 	const client = await getWeaviateClient.call(this, itemIndex);
 
 	try {
-		const queryVector = parseJsonSafe(queryVectorJson, 'queryVector');
-
-		if (!Array.isArray(queryVector)) {
-			throw new Error('Query vector must be an array of numbers');
+		if (!objectId || typeof objectId !== 'string') {
+			throw new Error('Object ID must be a valid UUID string');
 		}
 
 		const collection = client.collections.get(collectionName);
@@ -96,7 +94,7 @@ export async function execute(
 			queryOptions.rerank = parseJsonSafe(additionalOptions.rerank, 'rerank');
 		}
 
-		const result = await collection.query.nearVector(queryVector, queryOptions);
+		const result = await collection.query.nearObject(objectId, queryOptions);
 
 		return result.objects.map((obj: IDataObject) => ({
 			json: {
@@ -108,7 +106,7 @@ export async function execute(
 					certainty: (obj.metadata as IDataObject)?.certainty,
 					distance: (obj.metadata as IDataObject)?.distance,
 					creationTime: (obj.metadata as IDataObject)?.creationTime,
-					...buildOperationMetadata('search:nearVector', {
+					...buildOperationMetadata('search:nearObject', {
 						collectionName,
 						resultCount: result.objects.length,
 					}),

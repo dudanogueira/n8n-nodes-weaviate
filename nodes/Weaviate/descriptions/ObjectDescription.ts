@@ -117,8 +117,8 @@ export const objectFields: INodeProperties[] = [
 			},
 		},
 		default: '[]',
-		placeholder: '[{"properties": {"title": "Article 1"}}, {"properties": {"title": "Article 2"}}]',
-		description: 'Array of objects to insert. Each object should have a "properties" field.',
+		placeholder: '[\n  {\n    "properties": {"title": "First Article", "content": "Content here"},\n    "vectors": [0.1, 0.2, 0.3]\n  },\n  {\n    "properties": {"title": "Second Article", "content": "More content"},\n    "id": "custom-uuid-123"\n  }\n]',
+		description: 'Array of objects to insert. Each object must have "properties". Optional: "vectors" (array of numbers) and "id" (custom UUID).',
 	},
 
 	// DELETE BY ID operation fields
@@ -157,7 +157,7 @@ export const objectFields: INodeProperties[] = [
 
 	// DELETE MANY operation fields
 	{
-		displayName: 'Where Filter',
+		displayName: 'Filters',
 		name: 'whereFilter',
 		type: 'json',
 		required: true,
@@ -169,7 +169,7 @@ export const objectFields: INodeProperties[] = [
 		},
 		default: '{}',
 		placeholder: '{"path": ["status"], "operator": "Equal", "valueText": "draft"}',
-		description: 'Filter to select objects to delete',
+		description: 'Filter to select objects to delete. See <a href="https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstoreweaviate/#search-filters" target="_blank">filter documentation</a>.',
 	},
 	{
 		displayName: 'Dry Run',

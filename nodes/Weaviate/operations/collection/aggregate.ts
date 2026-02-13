@@ -1,6 +1,6 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
-import { buildOperationMetadata } from '../../helpers/utils';
+import { buildOperationMetadata, parseJsonSafe } from '../../helpers/utils';
 
 export async function execute(
 	this: IExecuteFunctions,
@@ -14,6 +14,7 @@ export async function execute(
 		tenant?: string;
 		limit?: number;
 		groupBy?: string;
+		filters?: string;
 	};
 
 	const client = await getWeaviateClient.call(this, itemIndex);
@@ -29,9 +30,16 @@ export async function execute(
 		// Check if group by is requested
 		if (additionalOptions.groupBy) {
 			// Group by aggregation
-			const groups = await collection.aggregate.groupBy.overAll({
+			const groupByOptions: any = {
 				groupBy: { property: additionalOptions.groupBy },
-			});
+			};
+
+			// Add filters if provided
+			if (additionalOptions.filters) {
+				groupByOptions.where = parseJsonSafe(additionalOptions.filters, 'filters');
+			}
+
+			const groups = await collection.aggregate.groupBy.overAll(groupByOptions);
 
 			return [
 				{
@@ -52,6 +60,11 @@ export async function execute(
 
 			if (additionalOptions.limit) {
 				options.objectLimit = additionalOptions.limit;
+			}
+
+			// Add filters if provided
+			if (additionalOptions.filters) {
+				options.where = parseJsonSafe(additionalOptions.filters, 'filters');
 			}
 
 			const result = await collection.aggregate.overAll(Object.keys(options).length > 0 ? options : undefined);

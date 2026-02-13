@@ -18,6 +18,10 @@ export async function execute(
 		includeVector?: boolean;
 		autocut?: number;
 		tenant?: string;
+		returnScore?: boolean;
+		returnCreationTime?: boolean;
+		targetVector?: string;
+		rerank?: string;
 	};
 
 	const client = await getWeaviateClient.call(this, itemIndex);
@@ -55,16 +59,39 @@ export async function execute(
 			queryOptions.tenant = additionalOptions.tenant;
 		}
 
+		// Handle metadata returns
+		const returnMetadata: string[] = [];
+		if (additionalOptions.returnScore) {
+			returnMetadata.push('score');
+		}
+		if (additionalOptions.returnCreationTime) {
+			returnMetadata.push('creationTime');
+		}
+		if (returnMetadata.length > 0) {
+			queryOptions.returnMetadata = returnMetadata as any;
+		}
+
+		// Handle advanced options
+		if (additionalOptions.targetVector) {
+			queryOptions.targetVector = additionalOptions.targetVector;
+		}
+
+		if (additionalOptions.rerank) {
+			queryOptions.rerank = parseJsonSafe(additionalOptions.rerank, 'rerank');
+		}
+
 		const result = await collection.query.bm25(query, queryOptions);
 
 		return result.objects.map((obj: IDataObject) => ({
 			json: {
 				id: obj.uuid,
 				properties: obj.properties,
-				vector: obj.vector,
+				...(obj.vector && { vector: obj.vector }),
+				...(obj.vectors && { vectors: obj.vectors }),
 				metadata: {
 					score: (obj.metadata as IDataObject)?.score,
 					explainScore: (obj.metadata as IDataObject)?.explainScore,
+					creationTime: (obj.metadata as IDataObject)?.creationTime,
 					...buildOperationMetadata('search:bm25', {
 						collectionName,
 						query,

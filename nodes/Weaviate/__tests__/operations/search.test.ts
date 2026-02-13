@@ -3,6 +3,7 @@ import { execute as nearTextExecute } from '../../operations/search/nearText';
 import { execute as bm25Execute } from '../../operations/search/bm25';
 import { execute as hybridExecute } from '../../operations/search/hybrid';
 import { execute as nearVectorExecute } from '../../operations/search/nearVector';
+import { execute as nearObjectExecute } from '../../operations/search/nearObject';
 
 // Mock do cliente Weaviate
 const mockClose = jest.fn();
@@ -10,12 +11,14 @@ const mockNearText = jest.fn();
 const mockBm25 = jest.fn();
 const mockHybrid = jest.fn();
 const mockNearVector = jest.fn();
+const mockNearObject = jest.fn();
 
 const mockQuery = {
 	nearText: mockNearText,
 	bm25: mockBm25,
 	hybrid: mockHybrid,
 	nearVector: mockNearVector,
+	nearObject: mockNearObject,
 };
 
 const mockCollection = {
@@ -811,6 +814,284 @@ describe('Weaviate Search Operations', () => {
 				[0.1, 0.2],
 				expect.objectContaining({
 					tenant: 'tenant-1',
+				}),
+			);
+		});
+	});
+
+	describe('nearObject', () => {
+		beforeEach(() => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			mockNearObject.mockResolvedValue({
+				objects: [
+					{
+						uuid: 'uuid-1',
+						properties: { title: 'Similar Object 1' },
+						metadata: { distance: 0.12 },
+					},
+					{
+						uuid: 'uuid-2',
+						properties: { title: 'Similar Object 2' },
+						metadata: { distance: 0.18 },
+					},
+				],
+			});
+		});
+
+		it('should perform nearObject search successfully', async () => {
+			const result = await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					limit: 10,
+				}),
+			);
+			expect(result).toHaveLength(2);
+			expect(result[0].json).toMatchObject({
+				id: 'uuid-1',
+				properties: { title: 'Similar Object 1' },
+			});
+			expect(result[0].json.metadata).toMatchObject({
+				distance: 0.12,
+				resultCount: 2,
+			});
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should throw error if objectId is not provided', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			await expect(nearObjectExecute.call(executeFunctions, 0)).rejects.toThrow(
+				'Object ID must be a valid UUID string',
+			);
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform nearObject search with certainty', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { certainty: 0.75 };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					certainty: 0.75,
+				}),
+			);
+		});
+
+		it('should perform nearObject search with distance', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { distance: 0.25 };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					distance: 0.25,
+				}),
+			);
+		});
+
+		it('should perform nearObject search with offset', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { offset: 3 };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					offset: 3,
+				}),
+			);
+		});
+
+		it('should perform nearObject search with returnProperties', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { returnProperties: 'id, title, description' };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					returnProperties: ['id', 'title', 'description'],
+				}),
+			);
+		});
+
+		it('should perform nearObject search with whereFilter', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions')
+						return { whereFilter: '{"path": ["category"], "operator": "Equal", "valueText": "news"}' };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					where: { path: ['category'], operator: 'Equal', valueText: 'news' },
+				}),
+			);
+		});
+
+		it('should perform nearObject search with includeVector', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { includeVector: true };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					includeVector: true,
+				}),
+			);
+		});
+
+		it('should perform nearObject search with autocut', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { autocut: 4 };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					autoLimit: 4,
+				}),
+			);
+		});
+
+		it('should perform nearObject search with tenant', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { tenant: 'tenant-1' };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					tenant: 'tenant-1',
+				}),
+			);
+		});
+
+		it('should perform nearObject search with returnDistance metadata', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { returnDistance: true };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					returnMetadata: ['distance'],
+				}),
+			);
+		});
+
+		it('should perform nearObject search with targetVector', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'objectId') return '00000000-0000-0000-0000-000000000001';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { targetVector: 'content_vector' };
+					return undefined;
+				},
+			);
+
+			await nearObjectExecute.call(executeFunctions, 0);
+
+			expect(mockNearObject).toHaveBeenCalledWith(
+				'00000000-0000-0000-0000-000000000001',
+				expect.objectContaining({
+					targetVector: 'content_vector',
 				}),
 			);
 		});

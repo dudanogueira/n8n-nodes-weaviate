@@ -309,15 +309,11 @@ describe('Weaviate Object Operations', () => {
 		it('should insert multiple objects successfully', async () => {
 			const result = await insertManyExecute.call(executeFunctions, 0);
 
-			expect(mockInsertMany).toHaveBeenCalledWith(
-				expect.objectContaining({
-					objects: [
-						{ properties: { name: 'Object 1' } },
-						{ properties: { name: 'Object 2' } },
-						{ properties: { name: 'Object 3' } },
-					],
-				}),
-			);
+			expect(mockInsertMany).toHaveBeenCalledWith([
+				{ properties: { name: 'Object 1' } },
+				{ properties: { name: 'Object 2' } },
+				{ properties: { name: 'Object 3' } },
+			]);
 			expect(result).toHaveLength(1);
 			expect(result[0].json).toMatchObject({
 				success: true,
@@ -361,11 +357,8 @@ describe('Weaviate Object Operations', () => {
 
 			await insertManyExecute.call(executeFunctions, 0);
 
-			expect(mockInsertMany).toHaveBeenCalledWith(
-				expect.objectContaining({
-					tenant: 'tenant-1',
-				}),
-			);
+			expect(mockWithTenant).toHaveBeenCalledWith('tenant-1');
+			expect(mockInsertMany).toHaveBeenCalledWith([{ properties: { name: 'Test' } }]);
 		});
 
 		it('should throw error if objects is not an array', async () => {

@@ -1,4 +1,4 @@
-import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
 import { buildOperationMetadata, parseJsonSafe } from '../../helpers/utils';
 
@@ -23,17 +23,14 @@ export async function execute(
 			throw new Error('Objects must be an array');
 		}
 
-		const collection = client.collections.get(collectionName);
+		let collection = client.collections.get(collectionName);
 
-		const insertConfig: IDataObject = {
-			objects,
-		};
-
+		// If tenant is specified, use withTenant
 		if (additionalOptions.tenant) {
-			insertConfig.tenant = additionalOptions.tenant;
+			collection = collection.withTenant(additionalOptions.tenant);
 		}
 
-		const result = await collection.data.insertMany(insertConfig as never);
+		const result = await collection.data.insertMany(objects);
 
 		// Extract success and error information
 		const successCount = result.uuids ? Object.keys(result.uuids).length : 0;

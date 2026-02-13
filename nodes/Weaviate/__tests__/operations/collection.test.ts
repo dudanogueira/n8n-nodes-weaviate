@@ -267,4 +267,246 @@ describe('Weaviate Collection Operations', () => {
 			expect(result[0].json.collections).toEqual(['Apple', 'Mango', 'Zebra']);
 		});
 	});
+
+	describe('aggregate', () => {
+		beforeEach(() => {
+			// Setup basic mocks for aggregate
+			mockWithTenant.mockReturnValue({
+				aggregate: {
+					overAll: mockAggregateOverAll,
+					groupBy: {
+						overAll: mockAggregateGroupByOverAll,
+					},
+				},
+			});
+
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string, _itemIndex: number, defaultValue?: any, options?: any) => {
+					if (parameterName === 'collection') {
+						if (options?.extractValue) {
+							return 'TestCollection';
+						}
+						return { mode: 'list', value: 'TestCollection' };
+					}
+					if (parameterName === 'additionalOptions') {
+						return defaultValue || {};
+					}
+					return defaultValue;
+				},
+			);
+		});
+
+		it('should perform simple aggregate (count only)', async () => {
+			mockAggregateOverAll.mockResolvedValue({
+				totalCount: 100,
+				properties: {},
+			});
+
+			const result = await aggregateExecute.call(executeFunctions, 0);
+
+			expect(mockAggregateOverAll).toHaveBeenCalledWith(undefined);
+			expect(result).toHaveLength(1);
+			expect(result[0].json).toMatchObject({
+				collection: 'TestCollection',
+				totalCount: 100,
+			});
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform aggregate with objectLimit', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string, _itemIndex: number, defaultValue?: any, options?: any) => {
+					if (parameterName === 'collection') {
+						if (options?.extractValue) {
+							return 'TestCollection';
+						}
+						return { mode: 'list', value: 'TestCollection' };
+					}
+					if (parameterName === 'additionalOptions') {
+						return { limit: 50 };
+					}
+					return defaultValue;
+				},
+			);
+
+			mockAggregateOverAll.mockResolvedValue({
+				totalCount: 50,
+				properties: {},
+			});
+
+			const result = await aggregateExecute.call(executeFunctions, 0);
+
+			expect(mockAggregateOverAll).toHaveBeenCalledWith({ objectLimit: 50 });
+			expect(result[0].json.totalCount).toBe(50);
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform aggregate with groupBy', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string, _itemIndex: number, defaultValue?: any, options?: any) => {
+					if (parameterName === 'collection') {
+						if (options?.extractValue) {
+							return 'TestCollection';
+						}
+						return { mode: 'list', value: 'TestCollection' };
+					}
+					if (parameterName === 'additionalOptions') {
+						return { groupBy: 'category' };
+					}
+					return defaultValue;
+				},
+			);
+
+			const mockGroups = [
+				{ groupedBy: { value: 'tech' }, totalCount: 50 },
+				{ groupedBy: { value: 'science' }, totalCount: 30 },
+			];
+
+			mockAggregateGroupByOverAll.mockResolvedValue(mockGroups);
+
+			const result = await aggregateExecute.call(executeFunctions, 0);
+
+			expect(mockAggregateGroupByOverAll).toHaveBeenCalledWith({
+				groupBy: { property: 'category' },
+			});
+			expect(result).toHaveLength(1);
+			expect(result[0].json).toMatchObject({
+				collection: 'TestCollection',
+				groups: mockGroups,
+			});
+			expect(result[0].json.totalCount).toBeUndefined();
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform aggregate with tenant', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string, _itemIndex: number, defaultValue?: any, options?: any) => {
+					if (parameterName === 'collection') {
+						if (options?.extractValue) {
+							return 'TestCollection';
+						}
+						return { mode: 'list', value: 'TestCollection' };
+					}
+					if (parameterName === 'additionalOptions') {
+						return { tenant: 'tenant123' };
+					}
+					return defaultValue;
+				},
+			);
+
+			mockAggregateOverAll.mockResolvedValue({
+				totalCount: 25,
+				properties: {},
+			});
+
+			const result = await aggregateExecute.call(executeFunctions, 0);
+
+			expect(mockWithTenant).toHaveBeenCalledWith('tenant123');
+			expect(result[0].json).toMatchObject({
+				collection: 'TestCollection',
+				totalCount: 25,
+			});
+			expect(result[0].json.metadata).toMatchObject({
+				tenant: 'tenant123',
+			});
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform aggregate with multiple options', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string, _itemIndex: number, defaultValue?: any, options?: any) => {
+					if (parameterName === 'collection') {
+						if (options?.extractValue) {
+							return 'TestCollection';
+						}
+						return { mode: 'list', value: 'TestCollection' };
+					}
+					if (parameterName === 'additionalOptions') {
+						return { tenant: 'tenant456', limit: 100 };
+					}
+					return defaultValue;
+				},
+			);
+
+			mockAggregateOverAll.mockResolvedValue({
+				totalCount: 100,
+				properties: {},
+			});
+
+			const result = await aggregateExecute.call(executeFunctions, 0);
+
+			expect(mockWithTenant).toHaveBeenCalledWith('tenant456');
+			expect(mockAggregateOverAll).toHaveBeenCalledWith({ objectLimit: 100 });
+			expect(result[0].json.totalCount).toBe(100);
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform aggregate with filters', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string, _itemIndex: number, defaultValue?: any, options?: any) => {
+					if (parameterName === 'collection') {
+						if (options?.extractValue) {
+							return 'TestCollection';
+						}
+						return { mode: 'list', value: 'TestCollection' };
+					}
+					if (parameterName === 'additionalOptions') {
+						return {
+							filters: '{"path": ["status"], "operator": "Equal", "valueText": "active"}',
+						};
+					}
+					return defaultValue;
+				},
+			);
+
+			mockAggregateOverAll.mockResolvedValue({
+				totalCount: 42,
+				properties: {},
+			});
+
+			const result = await aggregateExecute.call(executeFunctions, 0);
+
+			expect(mockAggregateOverAll).toHaveBeenCalledWith({
+				where: { path: ['status'], operator: 'Equal', valueText: 'active' },
+			});
+			expect(result[0].json.totalCount).toBe(42);
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform aggregate with groupBy and filters', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string, _itemIndex: number, defaultValue?: any, options?: any) => {
+					if (parameterName === 'collection') {
+						if (options?.extractValue) {
+							return 'TestCollection';
+						}
+						return { mode: 'list', value: 'TestCollection' };
+					}
+					if (parameterName === 'additionalOptions') {
+						return {
+							groupBy: 'category',
+							filters: '{"path": ["published"], "operator": "Equal", "valueBoolean": true}',
+						};
+					}
+					return defaultValue;
+				},
+			);
+
+			const mockGroups = [
+				{ groupedBy: { value: 'tech' }, totalCount: 20 },
+				{ groupedBy: { value: 'science' }, totalCount: 15 },
+			];
+
+			mockAggregateGroupByOverAll.mockResolvedValue(mockGroups);
+
+			const result = await aggregateExecute.call(executeFunctions, 0);
+
+			expect(mockAggregateGroupByOverAll).toHaveBeenCalledWith({
+				groupBy: { property: 'category' },
+				where: { path: ['published'], operator: 'Equal', valueBoolean: true },
+			});
+			expect(result[0].json.groups).toEqual(mockGroups);
+			expect(mockClose).toHaveBeenCalled();
+		});
+	});
 });
