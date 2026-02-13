@@ -32,6 +32,12 @@ export const objectOperations: INodeProperties[] = [
 				action: 'Get an object by ID',
 			},
 			{
+				name: 'Get Many',
+				value: 'getMany',
+				description: 'Retrieve multiple objects from a collection',
+				action: 'Get many objects',
+			},
+			{
 				name: 'Insert',
 				value: 'insert',
 				description: 'Insert a single object',
@@ -154,6 +160,26 @@ export const objectFields: INodeProperties[] = [
 		placeholder: '00000000-0000-0000-0000-000000000000',
 		description: 'UUID of the object to retrieve',
 	},
+	// GET MANY operation fields
+	{
+		displayName: 'Limit',
+		name: 'limit',
+		type: 'number',
+		required: false,
+		displayOptions: {
+			show: {
+				resource: ['object'],
+				operation: ['getMany'],
+			},
+		},
+		default: 50,
+		typeOptions: {
+			minValue: 1,
+			maxValue: 10000,
+		},
+		description: 'Maximum number of objects to return',
+	},
+
 
 	// DELETE MANY operation fields
 	{
@@ -198,6 +224,80 @@ export const objectFields: INodeProperties[] = [
 			},
 		},
 		options: [
+			{
+				displayName: 'Offset',
+				name: 'offset',
+				type: 'number',
+				default: 0,
+				description: 'Number of objects to skip (for pagination)',
+				displayOptions: {
+					show: {
+						'/operation': ['getMany'],
+					},
+				},
+			},
+			{
+				displayName: 'Filters',
+				name: 'whereFilter',
+				type: 'json',
+				default: '',
+				placeholder: '{"path": ["status"], "operator": "Equal", "valueText": "active"}',
+				description: 'Filter to select objects. See <a href="https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstoreweaviate/#search-filters" target="_blank">filter documentation</a>.',
+				displayOptions: {
+					show: {
+						'/operation': ['getMany'],
+					},
+				},
+			},
+			{
+				displayName: 'Return Properties',
+				name: 'returnProperties',
+				type: 'string',
+				default: '',
+				placeholder: 'title, content, author',
+				description: 'Comma-separated list of properties to return. Leave empty to return all.',
+				displayOptions: {
+					show: {
+						'/operation': ['getMany'],
+					},
+				},
+			},
+			{
+				displayName: 'Include Vectors',
+				name: 'includeVectors',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to include vector embeddings in the response',
+				displayOptions: {
+					show: {
+						'/operation': ['getMany'],
+					},
+				},
+			},
+			{
+				displayName: 'Return Creation Time',
+				name: 'returnCreationTime',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to return object creation timestamp',
+				displayOptions: {
+					show: {
+						'/operation': ['getMany'],
+					},
+				},
+			},
+			{
+				displayName: 'Return Update Time',
+				name: 'returnUpdateTime',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to return object last update timestamp',
+				displayOptions: {
+					show: {
+						'/operation': ['getMany'],
+					},
+				},
+			},
 			{
 				displayName: 'Include Vectors',
 				name: 'includeVectors',

@@ -1,6 +1,6 @@
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
-import { buildOperationMetadata } from '../../helpers/utils';
+import { buildOperationMetadata, isNotEmpty } from '../../helpers/utils';
 
 export async function execute(
 	this: IExecuteFunctions,
@@ -40,8 +40,8 @@ export async function execute(
 			}),
 		};
 
-		// Only include vectors if requested
-		if (additionalOptions.includeVectors && object?.vectors) {
+		// Only include vectors if requested and not empty
+		if (additionalOptions.includeVectors && isNotEmpty(object?.vectors)) {
 			result.vectors = object.vectors;
 		}
 

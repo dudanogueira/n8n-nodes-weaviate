@@ -1,6 +1,6 @@
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { getWeaviateClient } from '../../helpers/client';
-import { buildOperationMetadata, parseJsonSafe } from '../../helpers/utils';
+import { buildOperationMetadata, parseJsonSafe, isNotEmpty } from '../../helpers/utils';
 
 export async function execute(
 	this: IExecuteFunctions,
@@ -102,8 +102,8 @@ export async function execute(
 			json: {
 				id: obj.uuid,
 				properties: obj.properties,
-				...(obj.vector && { vector: obj.vector }),
-				...(obj.vectors && { vectors: obj.vectors }),
+				...(isNotEmpty(obj.vector) && { vector: obj.vector }),
+				...(isNotEmpty(obj.vectors) && { vectors: obj.vectors }),
 				metadata: {
 					certainty: (obj.metadata as IDataObject)?.certainty,
 					distance: (obj.metadata as IDataObject)?.distance,

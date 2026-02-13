@@ -4,6 +4,7 @@ import { execute as insertManyExecute } from '../../operations/object/insertMany
 import { execute as getByIdExecute } from '../../operations/object/getById';
 import { execute as deleteByIdExecute } from '../../operations/object/deleteById';
 import { execute as deleteManyExecute } from '../../operations/object/deleteMany';
+import { execute as getManyExecute } from '../../operations/object/getMany';
 
 // Mock do cliente Weaviate
 const mockClose = jest.fn();
@@ -12,7 +13,23 @@ const mockInsertMany = jest.fn();
 const mockFetchObjectById = jest.fn();
 const mockDeleteById = jest.fn();
 const mockDeleteMany = jest.fn();
+const mockFetchObjects = jest.fn();
 const mockWithTenant = jest.fn();
+
+// Mock filter builder
+const createMockFilterBuilder = () => ({
+	equal: jest.fn((value: any) => ({ path: [], operator: 'Equal', value })),
+	notEqual: jest.fn((value: any) => ({ path: [], operator: 'NotEqual', value })),
+	greaterThan: jest.fn((value: any) => ({ path: [], operator: 'GreaterThan', value })),
+	greaterOrEqual: jest.fn((value: any) => ({ path: [], operator: 'GreaterOrEqual', value })),
+	lessThan: jest.fn((value: any) => ({ path: [], operator: 'LessThan', value })),
+	lessOrEqual: jest.fn((value: any) => ({ path: [], operator: 'LessOrEqual', value })),
+	like: jest.fn((value: any) => ({ path: [], operator: 'Like', value })),
+	containsAny: jest.fn((value: any) => ({ path: [], operator: 'ContainsAny', value })),
+	containsAll: jest.fn((value: any) => ({ path: [], operator: 'ContainsAll', value })),
+	isNull: jest.fn((value: any) => ({ path: [], operator: 'IsNull', value })),
+	withinGeoRange: jest.fn((value: any) => ({ path: [], operator: 'WithinGeoRange', value })),
+});
 
 const mockCollection = {
 	data: {
@@ -23,6 +40,10 @@ const mockCollection = {
 	},
 	query: {
 		fetchObjectById: mockFetchObjectById,
+		fetchObjects: mockFetchObjects,
+	},
+	filter: {
+		byProperty: jest.fn(() => createMockFilterBuilder()),
 	},
 	withTenant: mockWithTenant,
 };
@@ -227,6 +248,285 @@ describe('Weaviate Object Operations', () => {
 			await getByIdExecute.call(executeFunctions, 0);
 
 			expect(mockWithTenant).toHaveBeenCalledWith('tenant-1');
+		});
+	});
+
+	describe('getMany', () => {
+		beforeEach(() => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'limit') return 50;
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			mockFetchObjects.mockResolvedValue({
+				objects: [
+					{
+						uuid: 'uuid-1',
+						properties: { title: 'Object 1', content: 'Content 1' },
+						metadata: { creationTime: '2024-01-01T00:00:00Z' },
+					},
+					{
+						uuid: 'uuid-2',
+						properties: { title: 'Object 2', content: 'Content 2' },
+						metadata: { creationTime: '2024-01-02T00:00:00Z' },
+					},
+				],
+			});
+		});
+
+		it('should fetch multiple objects successfully', async () => {
+			const result = await getManyExecute.call(executeFunctions, 0);
+
+			expect(mockFetchObjects).toHaveBeenCalledWith(
+				expect.objectContaining({
+					limit: 50,
+				}),
+			);
+			expect(result).toHaveLength(2);
+			expect(result[0].json).toMatchObject({
+				id: 'uuid-1',
+				properties: { title: 'Object 1', content: 'Content 1' },
+			});
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should fetch with offset for pagination', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'limit') return 50;
+					if (parameterName === 'additionalOptions') return { offset: 10 };
+					return undefined;
+				},
+			);
+
+			await getManyExecute.call(executeFunctions, 0);
+
+			expect(mockFetchObjects).toHaveBeenCalledWith(
+				expect.objectContaining({
+					limit: 50,
+					offset: 10,
+				}),
+			);
+		});
+
+		it('should fetch with whereFilter', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'limit') return 50;
+					if (parameterName === 'additionalOptions')
+						return {
+							whereFilter: '{"path": ["status"], "operator": "Equal", "valueText": "published"}',
+						};
+					return undefined;
+				},
+			);
+
+			await getManyExecute.call(executeFunctions, 0);
+
+			expect(mockFetchObjects).toHaveBeenCalledWith(
+				expect.objectContaining({
+					filters: expect.objectContaining({ operator: 'Equal', value: 'published' }),
+				}),
+			);
+		});
+
+		it('should fetch with complex nested And/Or whereFilter', async () => {
+			const complexFilter = {
+				operator: 'And',
+				operands: [
+					{
+						path: ['status'],
+						operator: 'NotEqual',
+						valueText: 'archived',
+					},
+					{
+						operator: 'Or',
+						operands: [
+							{
+								path: ['rating'],
+								operator: 'GreaterThanEqual',
+								valueNumber: 4.5,
+							},
+							{
+								path: ['price'],
+								operator: 'LessThan',
+								valueNumber: 30,
+							},
+						],
+					},
+				],
+			};
+
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'limit') return 50;
+					if (parameterName === 'additionalOptions')
+						return {
+							whereFilter: JSON.stringify(complexFilter),
+						};
+					return undefined;
+				},
+			);
+
+			await getManyExecute.call(executeFunctions, 0);
+
+			// Verify that filters were passed (the actual structure depends on Weaviate's Filters API)
+			expect(mockFetchObjects).toHaveBeenCalledWith(
+				expect.objectContaining({
+					filters: expect.anything(),
+				}),
+			);
+		});
+
+		it('should build complex nested filter identical to manual construction', () => {
+			const { Filters } = require('weaviate-client');
+			const { buildWeaviateFilter } = require('../../helpers/utils');
+
+			// Create a real mock collection with actual filter builders
+			const testMockCollection = {
+				filter: {
+					byProperty: (prop: string) => ({
+						notEqual: (val: any) => ({ _prop: prop, _op: 'notEqual', _val: val }),
+						greaterOrEqual: (val: any) => ({ _prop: prop, _op: 'greaterOrEqual', _val: val }),
+						lessThan: (val: any) => ({ _prop: prop, _op: 'lessThan', _val: val }),
+					}),
+				},
+			};
+
+			// 1. Build filter manually - this is the expected structure
+			// const filter = Filters.and(
+			//   collection.filter.byProperty('status').notEqual('archived'),
+			//   Filters.or(
+			//     collection.filter.byProperty('rating').greaterOrEqual(4.5),
+			//     collection.filter.byProperty('price').lessThan(30)
+			//   )
+			// );
+			const manualFilter = Filters.and(
+				testMockCollection.filter.byProperty('status').notEqual('archived'),
+				Filters.or(
+					testMockCollection.filter.byProperty('rating').greaterOrEqual(4.5),
+					testMockCollection.filter.byProperty('price').lessThan(30),
+				),
+			);
+
+			// 2. Build filter using buildWeaviateFilter with JSON
+			const filterJson = {
+				operator: 'And',
+				operands: [
+					{
+						path: ['status'],
+						operator: 'NotEqual',
+						valueText: 'archived',
+					},
+					{
+						operator: 'Or',
+						operands: [
+							{
+								path: ['rating'],
+								operator: 'GreaterThanEqual',
+								valueNumber: 4.5,
+							},
+							{
+								path: ['price'],
+								operator: 'LessThan',
+								valueNumber: 30,
+							},
+						],
+					},
+				],
+			};
+
+			const builtFilter = buildWeaviateFilter(testMockCollection, filterJson);
+
+			// 3. Verify they produce identical structures
+			expect(JSON.stringify(builtFilter)).toEqual(JSON.stringify(manualFilter));
+		});
+
+		it('should fetch with returnProperties', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'limit') return 50;
+					if (parameterName === 'additionalOptions')
+						return { returnProperties: 'title, author, date' };
+					return undefined;
+				},
+			);
+
+			await getManyExecute.call(executeFunctions, 0);
+
+			expect(mockFetchObjects).toHaveBeenCalledWith(
+				expect.objectContaining({
+					returnProperties: ['title', 'author', 'date'],
+				}),
+			);
+		});
+
+		it('should fetch with includeVectors', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'limit') return 50;
+					if (parameterName === 'additionalOptions') return { includeVectors: true };
+					return undefined;
+				},
+			);
+
+			await getManyExecute.call(executeFunctions, 0);
+
+			expect(mockFetchObjects).toHaveBeenCalledWith(
+				expect.objectContaining({
+					includeVector: true,
+				}),
+			);
+		});
+
+		it('should fetch with returnMetadata', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'limit') return 50;
+					if (parameterName === 'additionalOptions')
+						return { returnCreationTime: true, returnUpdateTime: true };
+					return undefined;
+				},
+			);
+
+			await getManyExecute.call(executeFunctions, 0);
+
+			expect(mockFetchObjects).toHaveBeenCalledWith(
+				expect.objectContaining({
+					returnMetadata: ['creationTime', 'updateTime'],
+				}),
+			);
+		});
+
+		it('should fetch with tenant', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'limit') return 50;
+					if (parameterName === 'additionalOptions') return { tenant: 'tenant-1' };
+					return undefined;
+				},
+			);
+
+			const mockWithTenantCollection = {
+				query: { fetchObjects: mockFetchObjects },
+			};
+			mockWithTenant.mockReturnValue(mockWithTenantCollection);
+
+			await getManyExecute.call(executeFunctions, 0);
+
+			expect(mockWithTenant).toHaveBeenCalledWith('tenant-1');
+			expect(mockFetchObjects).toHaveBeenCalled();
 		});
 	});
 
