@@ -28,6 +28,8 @@ export async function getWeaviateClient(
 	 *   1. Environment variables (this mapping)
 	 *   2. Weaviate API key credential
 	 *   3. Custom headers JSON (overrides all)
+	 *
+	 * Note: Can be disabled by setting "read_env_vars_for_headers" to false in credentials
 	 */
 	const envVarToHeaderMapping: Record<string, string> = {
 		// OpenAI
@@ -48,10 +50,12 @@ export async function getWeaviateClient(
 		GOOGLE_STUDIO_APIKEY: 'X-Studio-Api-Key',
 	};
 
-	// Check for API keys from environment variables
-	for (const [envVar, headerName] of Object.entries(envVarToHeaderMapping)) {
-		if (process.env[envVar]) {
-			headers[headerName] = process.env[envVar] as string;
+	// Check for API keys from environment variables (enabled by default)
+	if (credentials.read_env_vars_for_headers !== false) {
+		for (const [envVar, headerName] of Object.entries(envVarToHeaderMapping)) {
+			if (process.env[envVar]) {
+				headers[headerName] = process.env[envVar] as string;
+			}
 		}
 	}
 

@@ -10,6 +10,7 @@ export interface WeaviateCredentials {
 	custom_connection_grpc_host?: string;
 	custom_connection_grpc_port?: number;
 	custom_connection_grpc_secure?: boolean;
+	read_env_vars_for_headers?: boolean;
 	custom_headers_json?: string | IDataObject;
 }
 

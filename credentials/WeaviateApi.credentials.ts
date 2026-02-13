@@ -12,6 +12,8 @@ export class WeaviateApi implements ICredentialType {
 
 	documentationUrl = 'https://weaviate.io/developers/weaviate/connections';
 
+	icon = 'file:weaviate.svg' as const;
+
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Connection Type',
@@ -156,15 +158,14 @@ export class WeaviateApi implements ICredentialType {
 			},
 		},
 
-		// ===== OpenAI Credential Name (for text2vec-openai vectorizer) =====
+		// ===== Environment Variable Headers =====
 		{
-			displayName: 'OpenAI Credential Name',
-			name: 'openai_credential_name',
-			type: 'string',
-			default: '',
-			placeholder: 'openAiApi',
-			description: 'Name of an existing OpenAI credential in n8n to use with text2vec-openai vectorizer. The API key will be passed as X-OpenAI-Api-Key header.',
-			hint: 'Leave empty if not using text2vec-openai vectorizer. The credential must already exist in your n8n instance.',
+			displayName: 'Read Environment Variables for Headers',
+			name: 'read_env_vars_for_headers',
+			type: 'boolean',
+			default: true,
+			description: 'Whether to automatically read API keys from environment variables and add them as HTTP headers for model providers (OpenAI, Cohere, Anthropic, etc.)',
+			hint: 'Supported environment variables: OPENAI_APIKEY, COHERE_APIKEY, HUGGINGFACE_APIKEY, ANTHROPIC_APIKEY, AWS_ACCESS_KEY, AWS_SECRET_KEY, VERTEX_APIKEY, GOOGLE_STUDIO_APIKEY. See <a href="https://docs.weaviate.io/weaviate/model-providers" target="_blank">documentation</a> for details.',
 		},
 
 		// ===== Custom Headers (JSON Override) =====
@@ -174,8 +175,8 @@ export class WeaviateApi implements ICredentialType {
 			type: 'json',
 			default: {},
 			placeholder: '{\n  "X-Custom-Header": "value",\n  "X-OpenAI-Api-Key": "override-value"\n}',
-			description: 'Custom headers as JSON object. These headers will override any headers generated from credentials above.',
-			hint: 'Use this to add custom headers or override headers from associated credentials',
+			description: 'Custom headers as JSON object. These headers will override environment variables and other headers.',
+			hint: 'Use this to add custom headers or override headers from environment variables. Priority: Custom Headers > Environment Variables.',
 		},
 	];
 

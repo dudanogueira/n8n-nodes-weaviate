@@ -239,6 +239,71 @@ describe('Weaviate Client Helper', () => {
 				}),
 			);
 		});
+
+		it('should not read environment variables when read_env_vars_for_headers is false', async () => {
+			process.env.OPENAI_APIKEY = 'env-openai-key';
+			process.env.COHERE_APIKEY = 'env-cohere-key';
+
+			const credentials: WeaviateCredentials = {
+				connection_type: 'weaviate_cloud',
+				weaviate_cloud_endpoint: 'my-cluster.weaviate.network',
+				read_env_vars_for_headers: false,
+			};
+
+			mockGetCredentials.mockResolvedValue(credentials);
+
+			await getWeaviateClient.call(executeFunctions, 0);
+
+			expect(mockConnectToCustom).toHaveBeenCalledWith(
+				expect.objectContaining({
+					headers: {},
+				}),
+			);
+		});
+
+		it('should read environment variables when read_env_vars_for_headers is true', async () => {
+			process.env.OPENAI_APIKEY = 'env-openai-key';
+
+			const credentials: WeaviateCredentials = {
+				connection_type: 'weaviate_cloud',
+				weaviate_cloud_endpoint: 'my-cluster.weaviate.network',
+				read_env_vars_for_headers: true,
+			};
+
+			mockGetCredentials.mockResolvedValue(credentials);
+
+			await getWeaviateClient.call(executeFunctions, 0);
+
+			expect(mockConnectToCustom).toHaveBeenCalledWith(
+				expect.objectContaining({
+					headers: {
+						'X-OpenAI-Api-Key': 'env-openai-key',
+					},
+				}),
+			);
+		});
+
+		it('should read environment variables by default when flag is undefined', async () => {
+			process.env.OPENAI_APIKEY = 'env-openai-key';
+
+			const credentials: WeaviateCredentials = {
+				connection_type: 'weaviate_cloud',
+				weaviate_cloud_endpoint: 'my-cluster.weaviate.network',
+				// read_env_vars_for_headers is undefined (default behavior)
+			};
+
+			mockGetCredentials.mockResolvedValue(credentials);
+
+			await getWeaviateClient.call(executeFunctions, 0);
+
+			expect(mockConnectToCustom).toHaveBeenCalledWith(
+				expect.objectContaining({
+					headers: {
+						'X-OpenAI-Api-Key': 'env-openai-key',
+					},
+				}),
+			);
+		});
 	});
 
 	describe('Custom Connection', () => {

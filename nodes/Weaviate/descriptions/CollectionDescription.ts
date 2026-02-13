@@ -13,6 +13,12 @@ export const collectionOperations: INodeProperties[] = [
 		},
 		options: [
 			{
+				name: 'Aggregate',
+				value: 'aggregate',
+				description: 'Aggregate data from a collection',
+				action: 'Aggregate collection data',
+			},
+			{
 				name: 'Create',
 				value: 'create',
 				description: 'Create a new collection',
@@ -126,5 +132,84 @@ export const collectionFields: INodeProperties[] = [
 		default: '',
 		placeholder: 'Article',
 		description: 'Name of the collection',
+	},
+
+	// AGGREGATE operation fields
+	{
+		displayName: 'Collection',
+		name: 'collection',
+		type: 'resourceLocator',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['collection'],
+				operation: ['aggregate'],
+			},
+		},
+		default: { mode: 'list', value: '' },
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'listCollections',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By Name',
+				name: 'name',
+				type: 'string',
+				placeholder: 'e.g. Article',
+			},
+		],
+		description: 'The collection to aggregate data from',
+	},
+	{
+		displayName: 'Additional Options',
+		name: 'additionalOptions',
+		type: 'collection',
+		placeholder: 'Add Option',
+		default: {},
+		displayOptions: {
+			show: {
+				resource: ['collection'],
+				operation: ['aggregate'],
+			},
+		},
+		options: [
+			{
+				displayName: 'Tenant',
+				name: 'tenant',
+				type: 'string',
+				default: '',
+				placeholder: 'tenantName',
+				description: 'Specify tenant for multi-tenancy',
+			},
+			{
+				displayName: 'Limit',
+				name: 'limit',
+				type: 'number',
+				default: 100,
+				description: 'Maximum number of objects to aggregate',
+			},
+			{
+				displayName: 'Filters (JSON)',
+				name: 'filters',
+				type: 'json',
+				default: '',
+				placeholder: '{"path": ["property"], "operator": "Equal", "valueText": "value"}',
+				description: 'Filter conditions as JSON object. See <a href="https://weaviate.io/developers/weaviate/api/graphql/filters" target="_blank">Weaviate filters documentation</a>.',
+			},
+			{
+				displayName: 'Group By Property',
+				name: 'groupBy',
+				type: 'string',
+				default: '',
+				placeholder: 'category',
+				description: 'Property name to group aggregation results by',
+			},
+		],
 	},
 ];

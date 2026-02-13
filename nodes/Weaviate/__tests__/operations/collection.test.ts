@@ -4,12 +4,16 @@ import { execute as deleteExecute } from '../../operations/collection/delete';
 import { execute as existsExecute } from '../../operations/collection/exists';
 import { execute as getExecute } from '../../operations/collection/get';
 import { execute as listExecute } from '../../operations/collection/list';
+import { execute as aggregateExecute } from '../../operations/collection/aggregate';
 
 // Mock do cliente Weaviate
 const mockClose = jest.fn();
 const mockCollectionsDelete = jest.fn();
 const mockCollectionsExists = jest.fn();
 const mockCollectionsListAll = jest.fn();
+const mockAggregateOverAll = jest.fn();
+const mockAggregateGroupByOverAll = jest.fn();
+const mockWithTenant = jest.fn();
 
 // Mock REST API helper
 const mockMakeWeaviateRestRequest = jest.fn();
@@ -27,6 +31,15 @@ jest.mock('../../helpers/client', () => ({
 				delete: mockCollectionsDelete,
 				exists: mockCollectionsExists,
 				listAll: mockCollectionsListAll,
+				get: jest.fn(() => ({
+					aggregate: {
+						overAll: mockAggregateOverAll,
+						groupBy: {
+							overAll: mockAggregateGroupByOverAll,
+						},
+					},
+					withTenant: mockWithTenant,
+				})),
 			},
 			close: mockClose,
 		};
