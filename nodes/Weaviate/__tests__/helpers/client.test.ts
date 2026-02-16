@@ -73,6 +73,7 @@ describe('Weaviate Client Helper', () => {
 				grpcPort: 443,
 				grpcSecure: true,
 				headers: {
+					'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 					Authorization: 'Bearer test-api-key-123',
 				},
 			});
@@ -130,6 +131,7 @@ describe('Weaviate Client Helper', () => {
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
 					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 						Authorization: 'Bearer test-api-key',
 						'X-Custom-Header': 'custom-value',
 						'X-Another-Header': 'another-value',
@@ -154,6 +156,7 @@ describe('Weaviate Client Helper', () => {
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
 					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 						'X-Custom-Header': 'custom-value',
 					},
 				}),
@@ -189,6 +192,7 @@ describe('Weaviate Client Helper', () => {
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
 					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 						Authorization: 'Bearer overridden-key',
 					},
 				}),
@@ -211,6 +215,7 @@ describe('Weaviate Client Helper', () => {
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
 					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 						'X-OpenAI-Api-Key': 'env-openai-key',
 						'X-Cohere-Api-Key': 'env-cohere-key',
 					},
@@ -234,6 +239,7 @@ describe('Weaviate Client Helper', () => {
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
 					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 						'X-OpenAI-Api-Key': 'custom-openai-key',
 					},
 				}),
@@ -256,7 +262,9 @@ describe('Weaviate Client Helper', () => {
 
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
-					headers: {},
+					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
+					},
 				}),
 			);
 		});
@@ -277,6 +285,7 @@ describe('Weaviate Client Helper', () => {
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
 					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 						'X-OpenAI-Api-Key': 'env-openai-key',
 					},
 				}),
@@ -299,6 +308,7 @@ describe('Weaviate Client Helper', () => {
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
 					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 						'X-OpenAI-Api-Key': 'env-openai-key',
 					},
 				}),
@@ -323,7 +333,9 @@ describe('Weaviate Client Helper', () => {
 				grpcHost: 'localhost',
 				grpcPort: 50051,
 				grpcSecure: false,
-				headers: {},
+				headers: {
+					'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
+				},
 			});
 		});
 
@@ -351,6 +363,7 @@ describe('Weaviate Client Helper', () => {
 				grpcPort: 50052,
 				grpcSecure: true,
 				headers: {
+					'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 					Authorization: 'Bearer custom-api-key',
 				},
 			});
@@ -374,7 +387,9 @@ describe('Weaviate Client Helper', () => {
 				grpcHost: 'localhost',
 				grpcPort: 50051,
 				grpcSecure: false,
-				headers: {},
+				headers: {
+					'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
+				},
 			});
 		});
 
@@ -392,6 +407,7 @@ describe('Weaviate Client Helper', () => {
 			expect(mockConnectToCustom).toHaveBeenCalledWith(
 				expect.objectContaining({
 					headers: {
+						'X-Weaviate-Client': 'weaviate-client-typescript/3.11.0#n8n-nodes-weaviate@0.1.0',
 						'X-Custom': 'value123',
 					},
 				}),

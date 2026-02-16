@@ -1,6 +1,7 @@
 import type { IExecuteFunctions } from 'n8n-workflow';
 import weaviate, { type WeaviateClient } from 'weaviate-client';
 import type { WeaviateCredentials } from './types';
+import packageJson from '../../../package.json';
 
 export async function getWeaviateClient(
 	this: IExecuteFunctions,
@@ -10,6 +11,12 @@ export async function getWeaviateClient(
 
 	// Build connection config based on connection type
 	const headers: Record<string, string> = {};
+
+	// Add custom client identification header
+	const n8nNodesVersion = packageJson.version;
+	// Get weaviate-client version from devDependencies
+	const weaviateClientVersion = (packageJson as { devDependencies?: { 'weaviate-client'?: string } }).devDependencies?.['weaviate-client']?.replace('^', '') || 'unknown';
+	headers['X-Weaviate-Client'] = `weaviate-client-typescript/${weaviateClientVersion}#n8n-nodes-weaviate@${n8nNodesVersion}`;
 
 	/**
 	 * Automatically map environment variables to HTTP headers for model providers.
