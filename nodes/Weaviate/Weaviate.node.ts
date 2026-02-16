@@ -62,9 +62,9 @@ export class Weaviate implements INodeType {
 						description: 'Manage data objects',
 					},
 					{
-						name: 'Search',
+						name: 'Search and Generative',
 						value: 'search',
-						description: 'Search and query data',
+						description: 'Search and query data with optional generative AI',
 					},
 					{
 						name: 'Tenant',
