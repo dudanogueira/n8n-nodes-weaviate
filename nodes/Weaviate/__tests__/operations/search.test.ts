@@ -4,6 +4,8 @@ import { execute as bm25Execute } from '../../operations/search/bm25';
 import { execute as hybridExecute } from '../../operations/search/hybrid';
 import { execute as nearVectorExecute } from '../../operations/search/nearVector';
 import { execute as nearObjectExecute } from '../../operations/search/nearObject';
+import { execute as nearImageExecute } from '../../operations/search/nearImage';
+import { execute as nearMediaExecute } from '../../operations/search/nearMedia';
 
 // Mock do cliente Weaviate
 const mockClose = jest.fn();
@@ -12,6 +14,8 @@ const mockBm25 = jest.fn();
 const mockHybrid = jest.fn();
 const mockNearVector = jest.fn();
 const mockNearObject = jest.fn();
+const mockNearImage = jest.fn();
+const mockNearMedia = jest.fn();
 
 const mockQuery = {
 	nearText: mockNearText,
@@ -19,6 +23,8 @@ const mockQuery = {
 	hybrid: mockHybrid,
 	nearVector: mockNearVector,
 	nearObject: mockNearObject,
+	nearImage: mockNearImage,
+	nearMedia: mockNearMedia,
 };
 
 const mockCollection = {
@@ -1092,6 +1098,608 @@ describe('Weaviate Search Operations', () => {
 				'00000000-0000-0000-0000-000000000001',
 				expect.objectContaining({
 					targetVector: 'content_vector',
+				}),
+			);
+		});
+	});
+
+	describe('nearImage', () => {
+		beforeEach(() => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			mockNearImage.mockResolvedValue({
+				objects: [
+					{
+						uuid: 'uuid-1',
+						properties: { title: 'Similar Image 1' },
+						metadata: { distance: 0.11 },
+					},
+					{
+						uuid: 'uuid-2',
+						properties: { title: 'Similar Image 2' },
+						metadata: { distance: 0.19 },
+					},
+				],
+			});
+		});
+
+		it('should perform nearImage search successfully', async () => {
+			const result = await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					limit: 10,
+				}),
+			);
+			expect(result).toHaveLength(2);
+			expect(result[0].json).toMatchObject({
+				id: 'uuid-1',
+				properties: { title: 'Similar Image 1' },
+			});
+			expect(result[0].json.metadata).toMatchObject({
+				distance: 0.11,
+				resultCount: 2,
+			});
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should throw error if imageData is not provided', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return '';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			await expect(nearImageExecute.call(executeFunctions, 0)).rejects.toThrow(
+				'Image data must be provided as a base64 encoded string',
+			);
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform nearImage search with certainty', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { certainty: 0.75 };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					certainty: 0.75,
+				}),
+			);
+		});
+
+		it('should perform nearImage search with distance', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { distance: 0.25 };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					distance: 0.25,
+				}),
+			);
+		});
+
+		it('should perform nearImage search with offset', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { offset: 3 };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					offset: 3,
+				}),
+			);
+		});
+
+		it('should perform nearImage search with returnProperties', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { returnProperties: 'id, title, description' };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					returnProperties: ['id', 'title', 'description'],
+				}),
+			);
+		});
+
+		it('should perform nearImage search with whereFilter', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions')
+						return { whereFilter: '{"path": ["category"], "operator": "Equal", "valueText": "photos"}' };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					where: { path: ['category'], operator: 'Equal', valueText: 'photos' },
+				}),
+			);
+		});
+
+		it('should perform nearImage search with includeVector', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { includeVector: true };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					includeVector: true,
+				}),
+			);
+		});
+
+		it('should perform nearImage search with autocut', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { autocut: 4 };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					autoLimit: 4,
+				}),
+			);
+		});
+
+		it('should perform nearImage search with tenant', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { tenant: 'tenant-1' };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					tenant: 'tenant-1',
+				}),
+			);
+		});
+
+		it('should perform nearImage search with returnDistance metadata', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { returnDistance: true };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					returnMetadata: ['distance'],
+				}),
+			);
+		});
+
+		it('should perform nearImage search with targetVector', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'imageData') return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { targetVector: 'image_vector' };
+					return undefined;
+				},
+			);
+
+			await nearImageExecute.call(executeFunctions, 0);
+
+			expect(mockNearImage).toHaveBeenCalledWith(
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+				expect.objectContaining({
+					targetVector: 'image_vector',
+				}),
+			);
+		});
+	});
+
+	describe('nearMedia', () => {
+		beforeEach(() => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			mockNearMedia.mockResolvedValue({
+				objects: [
+					{
+						uuid: 'uuid-1',
+						properties: { title: 'Similar Audio 1' },
+						metadata: { distance: 0.13 },
+					},
+					{
+						uuid: 'uuid-2',
+						properties: { title: 'Similar Audio 2' },
+						metadata: { distance: 0.21 },
+					},
+				],
+			});
+		});
+
+		it('should perform nearMedia search successfully', async () => {
+			const result = await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					limit: 10,
+				}),
+			);
+			expect(result).toHaveLength(2);
+			expect(result[0].json).toMatchObject({
+				id: 'uuid-1',
+				properties: { title: 'Similar Audio 1' },
+			});
+			expect(result[0].json.metadata).toMatchObject({
+				distance: 0.13,
+				resultCount: 2,
+			});
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should throw error if mediaData is not provided', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return '';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			await expect(nearMediaExecute.call(executeFunctions, 0)).rejects.toThrow(
+				'Media data must be provided as a base64 encoded string',
+			);
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should perform nearMedia search with video type', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedVideoData';
+					if (parameterName === 'mediaType') return 'video';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return {};
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedVideoData',
+				'video',
+				expect.objectContaining({
+					limit: 10,
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with certainty', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { certainty: 0.8 };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					certainty: 0.8,
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with distance', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { distance: 0.3 };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					distance: 0.3,
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with offset', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { offset: 5 };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					offset: 5,
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with returnProperties', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { returnProperties: 'title, duration, artist' };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					returnProperties: ['title', 'duration', 'artist'],
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with whereFilter', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions')
+						return { whereFilter: '{"path": ["genre"], "operator": "Equal", "valueText": "jazz"}' };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					where: { path: ['genre'], operator: 'Equal', valueText: 'jazz' },
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with includeVector', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { includeVector: true };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					includeVector: true,
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with autocut', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { autocut: 3 };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					autoLimit: 3,
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with tenant', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { tenant: 'tenant-1' };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					tenant: 'tenant-1',
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with returnDistance metadata', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { returnDistance: true };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					returnMetadata: ['distance'],
+				}),
+			);
+		});
+
+		it('should perform nearMedia search with targetVector', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockImplementation(
+				(parameterName: string) => {
+					if (parameterName === 'collection') return 'TestCollection';
+					if (parameterName === 'mediaData') return 'base64EncodedAudioData';
+					if (parameterName === 'mediaType') return 'audio';
+					if (parameterName === 'limit') return 10;
+					if (parameterName === 'additionalOptions') return { targetVector: 'audio_vector' };
+					return undefined;
+				},
+			);
+
+			await nearMediaExecute.call(executeFunctions, 0);
+
+			expect(mockNearMedia).toHaveBeenCalledWith(
+				'base64EncodedAudioData',
+				'audio',
+				expect.objectContaining({
+					targetVector: 'audio_vector',
 				}),
 			);
 		});

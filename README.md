@@ -41,6 +41,7 @@ Weaviate is an open-source vector database that stores both objects and vectors,
 🔍 **Advanced Search Capabilities**
 - **Semantic Search**: Natural language queries with Near Text
 - **Image Search**: Find similar images with Near Image
+- **Media Search**: Find similar audio, video, and other media with Near Media
 - **Keyword Search**: Traditional BM25 full-text search
 - **Hybrid Search**: Combine semantic and keyword with alpha weighting
 - **Vector Search**: Custom embeddings with Near Vector
@@ -77,7 +78,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-This node supports 24 operations across 5 resources:
+This node supports 25 operations across 5 resources:
 
 ### Collection (Schema Management)
 - **Create**: Create a new collection with custom schema and vectorizer configuration
@@ -98,6 +99,7 @@ This node supports 24 operations across 5 resources:
 - **Near Vector**: Vector similarity search using custom embeddings
 - **Near Object**: Find similar objects to an existing object by its UUID
 - **Near Image**: Find similar objects using image similarity search
+- **Near Media**: Find similar objects using multi-modal media (audio, video, etc.)
 - **Hybrid**: Combined keyword + vector search with configurable weighting
 
 ### Backup (Backup Management)
@@ -242,6 +244,12 @@ Before inserting data, create a collection with a schema:
 - **Limit**: 10
 - Find objects similar to the provided image
 - Supports data URI format: `data:image/png;base64,iVBORw0KGgo...` or plain base64
+
+**Near Media Search** (multi-modal media):
+- **Media Data**: Base64 encoded media data
+- **Media Type**: audio, video, depth, thermal, or IMU
+- **Limit**: 10
+- Find objects similar to the provided media
 
 **Near Vector Search** (custom embeddings):
 - **Query Vector**: `[0.1, 0.2, 0.3, ...]`
@@ -425,8 +433,8 @@ npm link
 
 This project includes comprehensive test coverage:
 
-- **173 tests** covering all operations and edge cases
-- Unit tests for all search operations (Near Text, Near Vector, Near Object, Near Image, BM25, Hybrid)
+- **186 tests** covering all operations and edge cases
+- Unit tests for all search operations (Near Text, Near Vector, Near Object, Near Image, Near Media, BM25, Hybrid)
 - Tests for collection, object, backup, and tenant operations
 - Filter validation and JSON parsing tests
 - Mock-based testing for isolated unit tests
@@ -504,6 +512,7 @@ For issues, questions, or contributions:
 - ✅ Near Vector similarity search
 - ✅ Near Object similarity search
 - ✅ Near Image similarity search
+- ✅ Near Media multi-modal search (audio, video, etc.)
 - ✅ Hybrid search (keyword + vector)
 
 **Advanced Search Features**
@@ -536,6 +545,6 @@ For issues, questions, or contributions:
 **Other Features**
 - ✅ Multiple authentication methods (API Key, Bearer, Basic Auth)
 - ✅ Weaviate Cloud and self-hosted support
-- ✅ Comprehensive test suite (173 tests)
+- ✅ Comprehensive test suite (186 tests)
 - ✅ TypeScript support
 - ✅ Detailed error handling

@@ -26,6 +26,18 @@ export const searchOperations: INodeProperties[] = [
 				action: 'Hybrid search',
 			},
 			{
+				name: 'Near Image',
+				value: 'nearImage',
+				description: 'Find similar objects using image similarity search',
+				action: 'Near image search',
+			},
+			{
+				name: 'Near Media',
+				value: 'nearMedia',
+				description: 'Find similar objects using multi-modal media similarity search',
+				action: 'Near media search',
+			},
+			{
 				name: 'Near Object',
 				value: 'nearObject',
 				description: 'Find similar objects to an existing object by its UUID',
@@ -110,6 +122,76 @@ export const searchFields: INodeProperties[] = [
 		description: 'The vector to search for similar objects',
 	},
 
+	// Near Image search fields
+	{
+		displayName: 'Image Data',
+		name: 'imageData',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['search'],
+				operation: ['nearImage'],
+			},
+		},
+		default: '',
+		placeholder: 'data:image/png;base64,iVBORw0KGgo... or base64 string',
+		description: 'Base64 encoded image data (with or without data URI prefix)',
+	},
+
+	// Near Media search fields
+	{
+		displayName: 'Media Data',
+		name: 'mediaData',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['search'],
+				operation: ['nearMedia'],
+			},
+		},
+		default: '',
+		placeholder: 'Base64 encoded media data',
+		description: 'Base64 encoded media data (audio, video, etc.)',
+	},
+	{
+		displayName: 'Media Type',
+		name: 'mediaType',
+		type: 'options',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['search'],
+				operation: ['nearMedia'],
+			},
+		},
+		options: [
+			{
+				name: 'Audio',
+				value: 'audio',
+			},
+			{
+				name: 'Video',
+				value: 'video',
+			},
+			{
+				name: 'Depth',
+				value: 'depth',
+			},
+			{
+				name: 'Thermal',
+				value: 'thermal',
+			},
+			{
+				name: 'IMU',
+				value: 'imu',
+			},
+		],
+		default: 'audio',
+		description: 'Type of media being searched',
+	},
+
 	// Near Object search fields
 	{
 		displayName: 'Object ID',
@@ -187,7 +269,7 @@ export const searchFields: INodeProperties[] = [
 				description: 'Minimum certainty threshold for results (0-1)',
 				displayOptions: {
 					show: {
-						'/operation': ['nearText', 'nearVector', 'nearObject'],
+						'/operation': ['nearText', 'nearVector', 'nearObject', 'nearImage', 'nearMedia'],
 					},
 				},
 			},
@@ -199,7 +281,7 @@ export const searchFields: INodeProperties[] = [
 				description: 'Maximum distance threshold for results',
 				displayOptions: {
 					show: {
-						'/operation': ['nearText', 'nearVector', 'nearObject'],
+						'/operation': ['nearText', 'nearVector', 'nearObject', 'nearImage', 'nearMedia'],
 					},
 				},
 			},
@@ -274,7 +356,7 @@ export const searchFields: INodeProperties[] = [
 				description: 'Whether to return the distance metric in the results',
 				displayOptions: {
 					show: {
-						'/operation': ['nearText', 'nearVector', 'nearObject'],
+						'/operation': ['nearText', 'nearVector', 'nearObject', 'nearImage', 'nearMedia'],
 					},
 				},
 			},
@@ -319,7 +401,7 @@ export const searchFields: INodeProperties[] = [
 				description: 'Target vector name for named vectors in multi-vector collections',
 				displayOptions: {
 					show: {
-						'/operation': ['nearText', 'nearVector', 'nearObject', 'hybrid'],
+						'/operation': ['nearText', 'nearVector', 'nearObject', 'nearImage', 'nearMedia', 'hybrid'],
 					},
 				},
 			},
