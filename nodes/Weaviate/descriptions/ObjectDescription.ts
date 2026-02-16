@@ -61,6 +61,7 @@ export const objectFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['object'],
+				operation: ['deleteById', 'deleteMany', 'getById', 'getMany', 'insert', 'insertMany'],
 			},
 		},
 	},

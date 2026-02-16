@@ -31,6 +31,12 @@ export const collectionOperations: INodeProperties[] = [
 				action: 'Delete a collection',
 			},
 			{
+				name: 'Delete All',
+				value: 'deleteAll',
+				description: 'Delete all collections from the Weaviate instance',
+				action: 'Delete all collections',
+			},
+			{
 				name: 'Exists',
 				value: 'exists',
 				description: 'Check if a collection exists',
@@ -66,8 +72,8 @@ export const collectionFields: INodeProperties[] = [
 				operation: ['create'],
 			},
 		},
-		default: '{\n  "name": "MyCollection"\n}',
-		placeholder: '{\n  "name": "Article",\n  "description": "A collection of articles",\n  "vectorizers": {\n    "default": {\n      "vectorizer": "text2vec-openai"\n    }\n  },\n  "properties": [\n    {"name": "title", "dataType": ["text"]},\n    {"name": "content", "dataType": ["text"]}\n  ]\n}',
+		default: '{\n  "class": "MyCollection"\n}',
+		placeholder: '{\n  "class": "Article",\n  "description": "A collection of articles",\n  "vectorizers": {\n    "default": {\n      "vectorizer": "text2vec-openai"\n    }\n  },\n  "properties": [\n    {"name": "title", "dataType": ["text"]},\n    {"name": "content", "dataType": ["text"]}\n  ]\n}',
 		description: 'Complete collection configuration as JSON object. See <a href="https://weaviate.io/developers/weaviate/manage-data/collections" target="_blank">Weaviate docs</a> for full schema.',
 	},
 
@@ -98,10 +104,10 @@ export const collectionFields: INodeProperties[] = [
 				displayName: 'By Name',
 				name: 'name',
 				type: 'string',
-				placeholder: 'e.g. MyCollection',
+				placeholder: 'e.g. MyCollection or Collection1,Collection2,Collection3',
 			},
 		],
-		description: 'The collection to delete',
+		description: 'The collection(s) to delete. Use comma-separated names to delete multiple collections.',
 	},
 	{
 		displayName: 'Collection Name',

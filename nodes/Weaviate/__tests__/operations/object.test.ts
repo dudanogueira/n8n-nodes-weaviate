@@ -47,6 +47,9 @@ const mockCollection = {
 	},
 	filter: {
 		byProperty: jest.fn(() => createMockFilterBuilder()),
+		byCreationTime: jest.fn(() => ({
+			greaterThan: jest.fn(() => ({ path: ['_creationTimeUnix'], operator: 'GreaterThan', value: 0 })),
+		})),
 	},
 	withTenant: mockWithTenant,
 };
@@ -779,4 +782,5 @@ describe('Weaviate Object Operations', () => {
 			);
 		});
 	});
+
 });

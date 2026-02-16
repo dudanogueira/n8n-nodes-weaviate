@@ -1,0 +1,2615 @@
+{
+  "name": "Weaviate Playground",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2032,
+        -1408
+      ],
+      "id": "83155aac-0c3d-4e73-823a-ae96dc42eef4",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "collectionConfig": "{\n  \"class\": \"MyCollection\",\n  \"vectorConfig\": {\n    \"default\": {\n      \"vectorizer\": {\n        \"text2vec-openai\": {}\n      },\n      \"vectorIndexType\": \"hnsw\"\n    }\n  }\n}"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -32
+      ],
+      "id": "806948ce-d3c9-40ba-a269-953506f873bb",
+      "name": "Create a collection",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collectionName": {
+          "__rl": true,
+          "value": "MyCollection",
+          "mode": "list",
+          "cachedResultName": "MyCollection"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -32
+      ],
+      "id": "1d6758cd-7c77-450a-b6ca-3ffcb9c07390",
+      "name": "Delete a collection",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "collectionName": "MyCollection"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -32
+      ],
+      "id": "92f40207-8adc-470d-9e3f-939224ceed74",
+      "name": "Get a collection",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "list"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -32
+      ],
+      "id": "24c2e1b1-7e87-42d8-ace8-67f9b0ee5591",
+      "name": "List collections",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "exists",
+        "collectionName": "MyCollection"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -32
+      ],
+      "id": "52933896-82a4-4a86-919e-787292ba4cd7",
+      "name": "Check if collection exists",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collectionConfig": "{\n  \"class\": \"MTCollection\",\n  \"multiTenancyConfig\": {\n    \"enabled\": true,\n    \"autoTenantCreation\": true,\n    \"autoTenantActivation\": true\n  }\n}"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        192
+      ],
+      "id": "c711e44b-1ac6-496c-a5fb-020fb08d25ea",
+      "name": "Create a MT Collection",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "tenant",
+        "collectionName": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "tenantName": "tenant1"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        192
+      ],
+      "id": "4760f16f-f872-428b-90c2-d16c5c7626a5",
+      "name": "Create a tenant1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "tenant",
+        "collectionName": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "tenantName": "tenant2"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        192
+      ],
+      "id": "a8736dfc-1fb3-4807-a095-af51f9a6af9d",
+      "name": "Create a tenant2",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "tenant",
+        "collectionName": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "tenantName": "tenant2"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        192
+      ],
+      "id": "9637ff16-239c-4387-a182-3575e70715eb",
+      "name": "Delete a tenant2",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "tenant",
+        "collectionName": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "tenantName": "tenant2"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        32,
+        192
+      ],
+      "id": "92e4e68e-721e-4c97-8028-3d21e35ca3dd",
+      "name": "Check if tenant2 exists",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "collection": {
+          "__rl": true,
+          "value": "MyCollection",
+          "mode": "list",
+          "cachedResultName": "MyCollection"
+        },
+        "properties": "{\"text\": \"this is a test\"}",
+        "vector": "[1,2,3]",
+        "objectId": "dfd72fa5-c0ba-4077-afdb-f72bcba98d5b",
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        416
+      ],
+      "id": "9772f9a0-842b-45a5-88c8-363f93f984b0",
+      "name": "Insert an object in ST Collection",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getById",
+        "collection": {
+          "__rl": true,
+          "value": "MyCollection",
+          "mode": "list",
+          "cachedResultName": "MyCollection"
+        },
+        "objectId": "dfd72fa5-c0ba-4077-afdb-f72bcba98d5b",
+        "additionalOptions": {
+          "includeVectors": true
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        416
+      ],
+      "id": "b2a7996e-6144-4512-8d3f-375be34fd324",
+      "name": "Get an object by ID in ST Collection",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "tenant",
+        "collectionName": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "tenantName": "tenant2"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        416
+      ],
+      "id": "a340f112-f971-4456-bca6-e66c4fe4327a",
+      "name": "Create a tenant2 again",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "collection": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "properties": "{\"text\": \"this is a test for tenant1\"}",
+        "vector": "[1,2,3]",
+        "objectId": "1d8ced66-991d-4643-8446-337ced42ec12",
+        "additionalOptions": {
+          "tenant": "tenant1"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        416
+      ],
+      "id": "d4039da7-dbb8-4a38-98eb-cf56646a9ed1",
+      "name": "Insert an object in MTCollection tenant1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "collection": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "properties": "{\"text\": \"this is a test for tenant2\"}",
+        "vector": "[1,2,3]",
+        "objectId": "1d8ced66-991d-4643-8446-337ced42ec12",
+        "additionalOptions": {
+          "tenant": "tenant2"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        416
+      ],
+      "id": "5e2f9e40-926f-4edd-967d-cd719e83a137",
+      "name": "Insert an object in MTCollection tenant2",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getById",
+        "collection": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "objectId": "1d8ced66-991d-4643-8446-337ced42ec12",
+        "additionalOptions": {
+          "includeVectors": true,
+          "tenant": "tenant1"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        32,
+        416
+      ],
+      "id": "5e8bf38d-b9bb-4b0f-8b11-74e65b849ab7",
+      "name": "Get an object by ID in MTCollection tenant1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "tenant",
+        "operation": "list",
+        "collectionName": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        640
+      ],
+      "id": "3e4b53db-2d3b-43f9-96ef-d07f6f544d27",
+      "name": "List all tenants",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "tenant",
+        "operation": "updateStatus",
+        "collectionName": {
+          "__rl": true,
+          "value": "MTCollection",
+          "mode": "list",
+          "cachedResultName": "MTCollection"
+        },
+        "tenantName": "tenant1",
+        "status": "INACTIVE"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        240,
+        416
+      ],
+      "id": "72954a41-4d05-41a9-af06-257730af7f82",
+      "name": "Inactivate MTCollection T1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "backup",
+        "operation": "list"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        640
+      ],
+      "id": "7dc3a9ac-5305-48b2-84fb-fb200ae2c4e3",
+      "name": "List backups",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "backup",
+        "backupId": "=n8n-created-backup-{{ $now.toFormat(\"yyyy-MM-dd-HH-mm\") }}",
+        "includeCollections": "MyCollection"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        640
+      ],
+      "id": "6396b60e-88c2-4d98-ae3e-664b5f58763a",
+      "name": "Create a backup",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collectionName": {
+          "__rl": true,
+          "value": "MyCollection",
+          "mode": "list",
+          "cachedResultName": "MyCollection"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        640
+      ],
+      "id": "34a2f7f2-cb5a-4dc6-8765-ca0bbceb8377",
+      "name": "Delete a collection2",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "backup",
+        "operation": "restore",
+        "backupId": "n8n-created-backup",
+        "includeCollections": "MyCollection"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        640
+      ],
+      "id": "fe53c176-7882-474f-a079-95e7d62a59f6",
+      "name": "Restore a backup",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "exists",
+        "collectionName": "MyCollection"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        640
+      ],
+      "id": "fb920da3-f5d6-473d-8ac1-90e28d18f8a1",
+      "name": "Check if collection exists1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "exists",
+        "collectionName": "MyCollection"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        160,
+        640
+      ],
+      "id": "d2740d0d-7711-4cf9-a707-757a76731af2",
+      "name": "Check if collection exists2",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## OPERATION",
+        "height": 1216,
+        "width": 1472
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -112
+      ],
+      "id": "e161d5c2-af5f-4b6b-9175-0f30998a13da",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## SEARCH AND FILTER",
+        "height": 976,
+        "width": 1472
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -1616
+      ],
+      "id": "5f9be5f8-c016-4a70-a80a-81d451b37bf2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "collectionConfig": "{\n  \"class\": \"SearchTest\",\n  \"vectorConfig\": {\n    \"default\": {\n      \"vectorizer\": {\n        \"text2vec-openai\": {}\n      },\n      \"vectorIndexType\": \"hnsw\"\n    }\n  }\n}"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -1520
+      ],
+      "id": "e2122e16-af47-45fd-9f75-5c6643a24328",
+      "name": "Create a collection SearchTest",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collectionName": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        -1520
+      ],
+      "id": "9be8f5f9-7375-45c0-a9a5-d371515409aa",
+      "name": "Delete a collection3",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "insertMany",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "objects": "[\n  {\n    \"properties\": {\"text\": \"The Giraffe is a tall animal\"}\n  },\n  {\n    \"properties\": {\"text\": \"Cats are fun animals\"}\n  },\n  {\n    \"properties\": {\"text\": \"Dogs can bark loud, but cannot climp trees\"}\n  }  \n]",
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -1520
+      ],
+      "id": "d5af1a93-2ee3-41c3-9ac9-3cb8a0cd615e",
+      "name": "Insert many objects",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "properties": "{\"text\": \"The lion is the king of the forest\"}",
+        "vector": "null",
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -1520
+      ],
+      "id": "107721ba-8c26-4dd8-95ae-62a2201b5426",
+      "name": "Insert an object",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "queryText": "Domestic animals",
+        "additionalOptions": {
+          "includeVector": false
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -848,
+        -1296
+      ],
+      "id": "551430cf-d1c3-4a36-96c7-a9070c3c4078",
+      "name": "Near text search",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "aggregate",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "additionalOptions": {
+          "filters": ""
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -1520
+      ],
+      "id": "67e13cbe-8708-4b81-9bfc-0fcec58e5778",
+      "name": "Aggregate collection data",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "35f25c13-1763-462d-a2b6-4a1df8b594e4",
+              "leftValue": "={{ $json.totalCount }}",
+              "rightValue": 4,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        -1520
+      ],
+      "id": "e97c3931-2b62-49fa-9440-fe25624170ff",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "operation": "hybrid",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "query": "Domestic Animals",
+        "additionalOptions": {
+          "whereFilter": "",
+          "includeVector": false,
+          "returnExplainScore": true,
+          "returnScore": true,
+          "targetVector": ""
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -1296
+      ],
+      "id": "13d56af3-9a2a-4c6d-81a9-6191a5ebdd49",
+      "name": "Hybrid search",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "operation": "bm25",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "query": "King tree bark loud",
+        "additionalOptions": {
+          "includeVector": false
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -1296
+      ],
+      "id": "01c3f351-811c-4b60-97aa-88aecc03b5d6",
+      "name": "Bm25 search",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "operation": "nearVector",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "queryVector": "[\n        0.042379566,\n        0.013004343,\n        0.011364577,\n        0.023144117,\n        -0.03860476,\n        0.065108724,\n        -0.00641851,\n        0.00928308,\n        0.003376578,\n        -0.014108675,\n        0.005140162,\n        0.026329946,\n        -0.023572464,\n        -0.025085064,\n        0.013787415,\n        -0.045833115,\n        0.049072485,\n        -0.042807914,\n        0.01643781,\n        -0.0012549225,\n        -0.011137018,\n        -0.048992172,\n        -0.03683783,\n        0.008814575,\n        0.029234674,\n        -0.007134652,\n        -0.0007383127,\n        -0.012709854,\n        0.0009905521,\n        -0.002918113,\n        0.022033092,\n        -0.02487089,\n        0.02223388,\n        -0.026263017,\n        -0.02525908,\n        0.0055651627,\n        0.027628371,\n        -0.0276016,\n        -0.06328825,\n        0.030385856,\n        0.024268527,\n        -0.04687721,\n        -0.033571687,\n        -0.035499245,\n        0.099911906,\n        0.02525908,\n        -0.0015895684,\n        -0.045190595,\n        0.025392937,\n        0.024656717,\n        -0.015942534,\n        0.057719737,\n        -0.032714993,\n        0.044869334,\n        0.015072455,\n        -0.00641851,\n        0.053998474,\n        0.015353558,\n        0.013211823,\n        -0.0075295344,\n        -0.038363814,\n        0.006271266,\n        0.006783274,\n        -0.03397326,\n        0.042459883,\n        -0.016397653,\n        -0.016799228,\n        0.050946504,\n        -0.017455135,\n        -0.0019409467,\n        -0.035659876,\n        -0.053355955,\n        -0.02097561,\n        -0.008995284,\n        0.015781904,\n        0.0017602379,\n        -0.045190595,\n        0.0037814996,\n        0.029154358,\n        0.045752797,\n        -0.01746852,\n        0.047466185,\n        -0.026691364,\n        -0.00825237,\n        -0.010775601,\n        -0.016933087,\n        0.019998444,\n        0.0001772578,\n        0.0013285446,\n        -0.02888664,\n        -0.0051133907,\n        -0.0009972451,\n        -0.043477207,\n        -0.0152197,\n        0.025433095,\n        -0.033946488,\n        -0.0032761842,\n        -0.008044889,\n        -0.004454138,\n        0.038229957,\n        0.002299018,\n        0.022916557,\n        0.01483151,\n        -0.03715909,\n        -0.031670894,\n        -0.0023559078,\n        0.00010907368,\n        -0.013285445,\n        -0.040291376,\n        -0.00620099,\n        0.03924728,\n        -0.04481579,\n        -0.003748035,\n        0.021738604,\n        -0.012328358,\n        -0.0027758884,\n        0.017133875,\n        -0.004223232,\n        0.025848055,\n        -0.027789002,\n        0.0010022647,\n        0.017736237,\n        -0.02280947,\n        0.005016343,\n        -0.006994101,\n        0.0043939017,\n        -0.018204741,\n        -0.021484273,\n        0.0067129983,\n        0.018231513,\n        -0.021765376,\n        -0.010387411,\n        0.058094542,\n        -0.037212633,\n        0.021604745,\n        -0.006448628,\n        0.0008173728,\n        0.020105531,\n        0.04355752,\n        0.069606364,\n        -0.020868523,\n        0.018740175,\n        0.017321276,\n        0.022849627,\n        0.0078039444,\n        0.062324468,\n        -0.0014381411,\n        0.008413,\n        -0.018780332,\n        -0.0318583,\n        0.06355596,\n        0.009129142,\n        0.02918113,\n        0.034160662,\n        0.00092445954,\n        0.036409482,\n        0.010099616,\n        0.025633883,\n        -0.04559217,\n        0.0026186048,\n        -0.0037948855,\n        -0.06269927,\n        0.013238595,\n        0.02744097,\n        -0.0006249514,\n        0.008500008,\n        0.003915358,\n        -0.000960434,\n        -0.06377014,\n        -0.0128035555,\n        0.023478761,\n        0.054774854,\n        0.029930737,\n        -0.040853582,\n        -0.025111834,\n        -0.02624963,\n        -0.0065356363,\n        -0.033089794,\n        -0.0039320905,\n        0.007971267,\n        0.0183386,\n        0.06077171,\n        0.018606316,\n        -0.047091383,\n        0.02001183,\n        0.012321665,\n        0.0011779539,\n        0.002794294,\n        -0.019985057,\n        0.011230719,\n        -0.029636249,\n        0.029395303,\n        -0.0016129937,\n        -0.0184323,\n        0.029047271,\n        0.0062043364,\n        0.031376407,\n        -0.029770106,\n        0.0060437066,\n        0.01724096,\n        -0.018646475,\n        -0.034053575,\n        0.0055651627,\n        -0.08518748,\n        0.05563155,\n        0.0012072354,\n        -0.011364577,\n        -0.026918923,\n        -0.008272449,\n        -0.0062980372,\n        0.026222859,\n        0.023626007,\n        0.01930238,\n        -0.018700017,\n        -0.02583467,\n        -0.025861442,\n        -0.0005140999,\n        -0.014095289,\n        0.04162996,\n        0.008607095,\n        -0.039059877,\n        0.015500802,\n        0.014322848,\n        0.043182716,\n        -0.02445593,\n        -0.0040994133,\n        -0.017107103,\n        -0.010942924,\n        -0.026825221,\n        -0.018967735,\n        0.016651984,\n        0.016036235,\n        0.027521286,\n        -0.0031088612,\n        0.007081109,\n        0.018459072,\n        -0.020694507,\n        0.0026537427,\n        -0.04080004,\n        -0.04829611,\n        -0.039675627,\n        -0.022113407,\n        -0.0025667348,\n        0.016451197,\n        -0.049768552,\n        -0.017548835,\n        -0.030519713,\n        -0.025553567,\n        0.00717481,\n        0.0049159494,\n        0.03188507,\n        0.00036058103,\n        0.027949633,\n        -0.03855122,\n        -0.014938597,\n        0.0101531595,\n        -0.000114720824,\n        0.0069004,\n        0.023077186,\n        0.036944915,\n        -0.016718913,\n        -0.054507136,\n        0.030091366,\n        0.0019309074,\n        -0.0014147159,\n        -0.037828382,\n        0.0048958706,\n        -0.057880368,\n        0.0005663883,\n        0.028029947,\n        -0.0074291406,\n        0.008546858,\n        -0.011531901,\n        -0.030600028,\n        -0.072765425,\n        0.042165395,\n        0.0016339091,\n        -0.027789002,\n        -0.051107135,\n        -0.006344888,\n        -0.030974831,\n        0.014014973,\n        0.02496459,\n        -0.035954364,\n        -0.0023241164,\n        -0.0010800699,\n        0.037721295,\n        -0.011464971,\n        0.053329185,\n        -0.039622083,\n        0.009309852,\n        -0.026303174,\n        0.0150992265,\n        0.00067431165,\n        0.02966302,\n        0.004179728,\n        -0.007181503,\n        0.038203184,\n        0.019797657,\n        -0.049955953,\n        0.06826778,\n        -0.001040749,\n        0.04152287,\n        0.013178359,\n        0.012355129,\n        0.043932326,\n        -0.052820522,\n        0.0036074836,\n        -0.013760643,\n        -0.02615593,\n        -0.04527091,\n        0.038792163,\n        0.010481112,\n        0.021283485,\n        -0.01331891,\n        -0.012174421,\n        -0.012910642,\n        -0.019222066,\n        0.05996856,\n        -0.05054493,\n        -0.010695285,\n        -0.024857504,\n        0.017348047,\n        0.023331517,\n        0.016237022,\n        -0.06028982,\n        -0.04610083,\n        -0.018191356,\n        0.020935453,\n        -0.002531597,\n        -0.0030469517,\n        0.027414199,\n        -0.0121811135,\n        0.0022220493,\n        -0.036784288,\n        -0.01262954,\n        -0.038256727,\n        0.012482295,\n        -0.015728362,\n        0.058094542,\n        -0.096324496,\n        -0.047733903,\n        -0.032474045,\n        0.07265834,\n        -0.012047255,\n        0.059754387,\n        0.0007027566,\n        0.02033309,\n        -0.010253553,\n        0.013626784,\n        0.0276016,\n        0.03924728,\n        0.027253568,\n        0.009684655,\n        -0.0039187046,\n        0.007743708,\n        0.0016648638,\n        0.014309462,\n        -0.057344936,\n        0.075656764,\n        0.02081498,\n        -0.019757498,\n        0.01084253,\n        0.036168538,\n        0.030867746,\n        -0.035365388,\n        -0.0106417425,\n        -0.03528507,\n        0.04513705,\n        -0.0045946892,\n        -0.049366977,\n        0.02521892,\n        -0.0017987222,\n        -0.0061340607,\n        -0.016839385,\n        -0.018526,\n        -0.023117345,\n        0.05777328,\n        0.014657494,\n        0.016852772,\n        -0.019422853,\n        0.021470886,\n        0.047118153,\n        0.0011227373,\n        -0.01588899,\n        0.0015736728,\n        -0.017040173,\n        -0.0054246113,\n        -0.055417374,\n        -0.012542532,\n        0.058148086,\n        -0.02345199,\n        0.024563015,\n        -0.0382835,\n        0.016089778,\n        -0.023103958,\n        0.03571342,\n        -0.010220088,\n        -0.014617337,\n        0.06441266,\n        0.013037807,\n        -0.047546502,\n        0.0047051227,\n        0.0096779615,\n        -0.0334646,\n        -0.04818902,\n        -0.009764969,\n        0.012087413,\n        -0.0044039413,\n        0.0039923266,\n        0.06655439,\n        -0.011391349,\n        0.03250082,\n        0.0094570955,\n        0.0052974457,\n        0.010869302,\n        -0.023974039,\n        0.025607111,\n        0.0026403568,\n        -0.0056990213,\n        -0.027146483,\n        -0.025272464,\n        -0.021484273,\n        0.008928355,\n        -0.031028375,\n        0.048349652,\n        0.06617959,\n        0.0045076814,\n        0.014563793,\n        0.028003177,\n        0.03030554,\n        -0.008125205,\n        -0.0062110294,\n        0.058951236,\n        -0.033411056,\n        0.004725201,\n        -0.034963813,\n        0.0368646,\n        -0.015862219,\n        -0.02416144,\n        0.033732314,\n        -0.021859076,\n        0.047278784,\n        0.0056421314,\n        -0.0134996185,\n        -0.01927561,\n        -0.034696095,\n        0.05659533,\n        -0.022662226,\n        -0.012810248,\n        0.0459402,\n        -0.0051635876,\n        -0.0048423274,\n        -0.0048891776,\n        0.002337502,\n        -0.04484256,\n        0.060664624,\n        0.0073019755,\n        0.030760659,\n        -0.026878765,\n        0.043637834,\n        -0.0060604387,\n        -0.02120317,\n        -0.0135598555,\n        -0.023652779,\n        -0.015447259,\n        0.051401623,\n        0.032741763,\n        -0.015380329,\n        0.026905537,\n        -0.02097561,\n        -0.0134259965,\n        -0.09525363,\n        0.010983082,\n        0.016959859,\n        0.012154342,\n        -0.026691364,\n        0.018766947,\n        -0.010012608,\n        0.01898112,\n        -0.015045683,\n        0.011792924,\n        -0.016705528,\n        -0.033598457,\n        -0.0065891794,\n        -0.026075615,\n        0.040639408,\n        0.0021266753,\n        -0.03793547,\n        -0.039622083,\n        -0.0023241164,\n        0.014416549,\n        0.036088225,\n        -0.0153134,\n        0.032286644,\n        -0.026758293,\n        0.00036831974,\n        -0.015875606,\n        -0.00032565236,\n        -0.019811042,\n        -0.017602379,\n        -0.021885848,\n        0.013620092,\n        0.011659066,\n        -0.026838608,\n        -0.0338394,\n        -0.008292528,\n        0.0036376019,\n        0.029850421,\n        0.001310139,\n        -0.029395303,\n        0.035981137,\n        0.01483151,\n        0.028163806,\n        -0.0013528063,\n        0.025433095,\n        0.028618924,\n        0.04358429,\n        -0.015139384,\n        -0.024884276,\n        0.00534095,\n        -0.026932308,\n        -0.010454341,\n        -0.03972917,\n        -0.013446076,\n        0.013111429,\n        0.014416549,\n        0.012549224,\n        -0.046315003,\n        0.000023974248,\n        -0.0057893754,\n        0.017107103,\n        0.0077704797,\n        -0.025326008,\n        -0.024268527,\n        0.0006989918,\n        0.0067129983,\n        -0.023411833,\n        -0.0074559124,\n        -0.0134259965,\n        -0.011833082,\n        0.011879932,\n        0.0075429203,\n        0.023987424,\n        -0.015085841,\n        -0.0032745108,\n        -0.02049372,\n        0.0038752004,\n        0.017281119,\n        -0.01185316,\n        -0.006736424,\n        -0.014777967,\n        0.0055350447,\n        -0.0039923266,\n        -0.010159852,\n        -0.029261444,\n        -0.022635454,\n        0.026222859,\n        0.017749622,\n        0.019958286,\n        0.04660949,\n        -0.00019796401,\n        0.024911046,\n        -0.020212617,\n        -0.012294893,\n        0.010521269,\n        -0.016866157,\n        -0.030011052,\n        0.023759864,\n        0.025553567,\n        0.007743708,\n        -0.0025081716,\n        -0.0056789424,\n        -0.074371725,\n        0.018378757,\n        0.023264589,\n        -0.014416549,\n        -0.008105125,\n        0.016036235,\n        0.022287423,\n        -0.008707489,\n        0.008908276,\n        -0.025299236,\n        0.007181503,\n        -0.06982054,\n        -0.0012607788,\n        -0.031670894,\n        0.014242533,\n        -0.021765376,\n        0.031189006,\n        -0.0073889834,\n        0.008339378,\n        0.018927576,\n        -0.043155946,\n        -0.033919718,\n        -0.015032298,\n        -0.023023644,\n        0.009175993,\n        -0.021577973,\n        -0.012368515,\n        -0.018713403,\n        -0.002168506,\n        0.011926783,\n        0.0380961,\n        0.027253568,\n        0.0022019707,\n        -0.0052606347,\n        -0.008928355,\n        0.036730744,\n        -0.014925211,\n        -0.0023810063,\n        0.01705356,\n        0.01499214,\n        -0.034990583,\n        0.010046072,\n        -0.030198453,\n        -0.025285851,\n        0.01451025,\n        0.027414199,\n        -0.01856616,\n        0.0015251491,\n        -0.005458076,\n        0.03410712,\n        0.014603951,\n        -0.0014272651,\n        0.0045076814,\n        -0.036596883,\n        0.0068368176,\n        -0.03367877,\n        0.0016531511,\n        0.024536243,\n        -0.009785049,\n        -0.034776412,\n        0.0052204775,\n        0.017803166,\n        0.038203184,\n        -0.00016000262,\n        0.015259856,\n        -0.011940168,\n        0.0051702806,\n        -0.007328747,\n        0.03603468,\n        -0.0077905585,\n        -0.031992156,\n        0.025727583,\n        0.015567731,\n        0.003748035,\n        -0.056541786,\n        -0.013057887,\n        -0.0048791384,\n        0.037828382,\n        -0.023853566,\n        0.022059863,\n        0.0021668328,\n        -0.008399614,\n        -0.0026169317,\n        0.00027503716,\n        -0.046368547,\n        -0.06617959,\n        0.004541146,\n        0.015808675,\n        0.008506701,\n        -0.0028260853,\n        0.009791741,\n        -0.007261818,\n        0.032126013,\n        0.006766542,\n        0.020065373,\n        0.012127571,\n        -0.02718664,\n        0.094343394,\n        0.0077169365,\n        0.025633883,\n        0.010400797,\n        0.013747257,\n        -0.037078775,\n        0.035177987,\n        -0.021845689,\n        0.015326786,\n        0.013124815,\n        -0.0025884868,\n        -0.006659455,\n        -0.008674024,\n        -0.0016682103,\n        0.015822062,\n        -0.035177987,\n        -0.017602379,\n        0.04821579,\n        0.006485439,\n        -0.013359068,\n        0.020065373,\n        0.017548835,\n        0.030198453,\n        0.014644108,\n        -0.026022071,\n        0.01730789,\n        0.025326008,\n        0.007904338,\n        0.0036476413,\n        -0.03876539,\n        0.026825221,\n        -0.008292528,\n        0.0068435105,\n        0.00668288,\n        -0.0052070916,\n        0.01299765,\n        -0.006331502,\n        -0.03622208,\n        0.01634411,\n        -0.0039354367,\n        0.027735459,\n        0.01100316,\n        -0.022180336,\n        0.02789609,\n        0.0056387847,\n        0.0043704766,\n        -0.033652,\n        -0.011478357,\n        -0.022755926,\n        -0.014296076,\n        0.016785843,\n        0.0020547262,\n        -0.005896462,\n        -0.013278753,\n        0.043155946,\n        -0.023277974,\n        0.015018912,\n        0.004604729,\n        -0.0034970506,\n        -0.0039019722,\n        0.034026805,\n        -0.0024763802,\n        0.0014916845,\n        0.006850203,\n        -0.035044126,\n        0.022407895,\n        -0.045859884,\n        0.019998444,\n        -0.017910253,\n        0.013827572,\n        -0.0051769735,\n        -0.0020480335,\n        0.008774417,\n        -0.016411038,\n        0.01072875,\n        -0.023626007,\n        0.023023644,\n        0.019288994,\n        0.041389015,\n        -0.04481579,\n        -0.0053007924,\n        0.010414183,\n        -0.018070882,\n        0.038390588,\n        0.006070478,\n        -0.008821268,\n        0.02968979,\n        -0.015259856,\n        0.01515277,\n        0.008218905,\n        -0.006077171,\n        0.015045683,\n        -0.010233474,\n        0.01875356,\n        0.0030001013,\n        0.0018840568,\n        -0.032313418,\n        -0.0070342585,\n        -0.030412627,\n        -0.037908696,\n        -0.011137018,\n        -0.019797657,\n        0.0028428177,\n        0.04355752,\n        0.025326008,\n        -0.01650474,\n        -0.0338394,\n        0.018285057,\n        0.035392158,\n        0.021216555,\n        -0.03303625,\n        -0.019342538,\n        -0.017615765,\n        -0.01927561,\n        -0.016103165,\n        -0.0027106325,\n        0.0100193005,\n        -0.006622644,\n        -0.062431555,\n        0.06334179,\n        -0.057344936,\n        -0.02473703,\n        -0.00636162,\n        0.008325992,\n        0.0072685108,\n        -0.030466171,\n        -0.0074224477,\n        -0.059593756,\n        -0.015393715,\n        -0.013921273,\n        0.0065691005,\n        0.0039889803,\n        0.038685076,\n        -0.0057391785,\n        0.000064367065,\n        0.0052706744,\n        0.025714198,\n        0.00296831,\n        -0.01898112,\n        -0.0026738213,\n        -0.049661465,\n        0.022822857,\n        0.0005693165,\n        0.018231513,\n        0.015915763,\n        0.026423646,\n        -0.014309462,\n        -0.038042556,\n        0.016170094,\n        0.0366772,\n        -0.044521302,\n        -0.010775601,\n        0.0005981797,\n        0.0024429157,\n        0.027708687,\n        -0.004460831,\n        0.018914191,\n        -0.005488194,\n        0.0033899639,\n        -0.009999222,\n        0.035044126,\n        0.020239389,\n        -0.021577973,\n        0.01753545,\n        -0.012488988,\n        -0.032902393,\n        0.015166156,\n        -0.048055165,\n        -0.011404735,\n        0.029234674,\n        0.031376407,\n        0.03713232,\n        -0.048429966,\n        -0.02966302,\n        0.02869924,\n        -0.0152197,\n        0.004534453,\n        0.02400081,\n        0.015045683,\n        0.023331517,\n        -0.035820507,\n        -0.049420517,\n        -0.025754355,\n        0.01327206,\n        -0.0037948855,\n        -0.027146483,\n        0.031510267,\n        0.013646863,\n        0.009263,\n        -0.010113002,\n        -0.0306268,\n        -0.0002756646,\n        -0.010367333,\n        0.027949633,\n        -0.010166545,\n        0.0073956763,\n        -0.014777967,\n        0.0334646,\n        -0.0014967042,\n        -0.014028359,\n        0.015674818,\n        0.010106308,\n        -0.029448846,\n        -0.027494514,\n        0.009878749,\n        -0.002094884,\n        -0.005856305,\n        -0.035204757,\n        -0.033089794,\n        0.035633106,\n        -0.03300948,\n        0.0030536447,\n        -0.008647252,\n        0.031510267,\n        -0.005049808,\n        0.02152443,\n        0.011638987,\n        0.05228509,\n        -0.015915763,\n        -0.009845285,\n        0.0031339596,\n        -0.042272482,\n        -0.0018840568,\n        0.014724423,\n        0.012007098,\n        0.0008901583,\n        -0.013472848,\n        -0.025366165,\n        0.011036624,\n        -0.008667331,\n        -0.03220633,\n        -0.0214575,\n        -0.04545831,\n        0.031001603,\n        0.062324468,\n        0.026048843,\n        0.0051635876,\n        0.013921273,\n        0.036650427,\n        -0.0038250035,\n        0.029582705,\n        -0.035981137,\n        -0.02139057,\n        0.007482684,\n        0.023559077,\n        0.015969306,\n        0.01737482,\n        -0.04050555,\n        0.015433873,\n        -0.009236229,\n        0.030600028,\n        -0.010487805,\n        -0.011732688,\n        0.052070916,\n        0.063448876,\n        0.0014674226,\n        0.023907108,\n        0.027293727,\n        0.046636265,\n        -0.020426791,\n        -0.00021919311,\n        0.009611033,\n        0.0012716547,\n        -0.01969057,\n        -0.037533894,\n        -0.05027721,\n        0.016397653,\n        -0.025781127,\n        0.03624885,\n        -0.0037346492,\n        -0.0048590596,\n        -0.009785049,\n        0.02869924,\n        -0.022046477,\n        0.013666942,\n        0.0074626054,\n        0.00082992204,\n        -0.0068301247,\n        -0.045190595,\n        -0.04829611,\n        0.042379566,\n        -0.02370632,\n        0.015045683,\n        0.009363394,\n        0.0069874083,\n        -0.012248043,\n        0.03429452,\n        0.011224026,\n        -0.006753156,\n        0.040933896,\n        -0.00043420316,\n        0.021818917,\n        0.011739381,\n        -0.029475618,\n        -0.007870873,\n        0.0030151603,\n        -0.000021712773,\n        0.00081360806,\n        0.047011066,\n        -0.020935453,\n        -0.018003954,\n        0.020145688,\n        0.0071279593,\n        0.01483151,\n        0.0073822904,\n        -0.04278114,\n        0.043611065,\n        0.01003938,\n        -0.011538593,\n        -0.02888664,\n        0.04719847,\n        0.023318132,\n        0.015366944,\n        -0.0049293353,\n        0.036409482,\n        -0.0114716645,\n        0.039488226,\n        0.0007793068,\n        0.043075632,\n        -0.040933896,\n        0.02686538,\n        0.007884259,\n        -0.019757498,\n        0.029582705,\n        0.013720485,\n        0.049527604,\n        0.002926479,\n        0.022568526,\n        0.013961431,\n        -0.0027240182,\n        0.009644497,\n        -0.0024546282,\n        0.03078743,\n        0.015420487,\n        0.0017167339,\n        -0.017414978,\n        0.0054547293,\n        -0.03140318,\n        0.01364017,\n        -0.019650413,\n        -0.04668981,\n        -0.038203184,\n        -0.005943313,\n        0.0049594534,\n        -0.018057497,\n        -0.013198437,\n        -0.010782294,\n        0.022943329,\n        -0.045190595,\n        -0.0005383617,\n        0.022113407,\n        0.0074358336,\n        0.00081695453,\n        0.0006090557,\n        0.0024797267,\n        0.0011486723,\n        0.010427569,\n        0.04990241,\n        0.047466185,\n        -0.00069020735,\n        -0.030600028,\n        -0.0032477393,\n        -0.016156709,\n        0.003550594,\n        0.0008684063,\n        0.032955937,\n        -0.031483494,\n        -0.0009679635,\n        -0.0129374135,\n        -0.049072485,\n        -0.026878765,\n        -0.026303174,\n        0.022675611,\n        0.019396082,\n        -0.04071972,\n        -0.006083864,\n        -0.040559094,\n        -0.008580323,\n        -0.006733077,\n        -0.007556306,\n        0.015728362,\n        -0.0012156016,\n        -0.046502404,\n        -0.013961431,\n        -0.015005526,\n        0.01737482,\n        0.02072128,\n        -0.017615765,\n        0.022635454,\n        -0.019061435,\n        0.0020011829,\n        -0.020199232,\n        0.023679549,\n        -0.025687426,\n        0.016424425,\n        0.01705356,\n        -0.016170094,\n        0.008413,\n        0.023800023,\n        0.031670894,\n        0.005970084,\n        -0.00001103286,\n        0.042995315,\n        0.035847276,\n        -0.034348063,\n        -0.0017937025,\n        0.008981898,\n        0.023237817,\n        0.000153728,\n        0.035392158,\n        -0.00873426,\n        -0.01084253,\n        -0.0044574845,\n        0.028726012,\n        -0.033384282,\n        0.005929927,\n        -0.022247264,\n        0.0062411474,\n        -0.00051911955,\n        -0.013104737,\n        -0.0032410463,\n        0.015366944,\n        0.00231575,\n        0.0015837121,\n        -0.036302395,\n        -0.03972917,\n        0.023023644,\n        -0.018003954,\n        0.036596883,\n        0.0070543373,\n        -0.067518175,\n        0.043959096,\n        0.01888742,\n        -0.017000016,\n        -0.022461439,\n        0.0102267815,\n        -0.0131448945,\n        0.0033732315,\n        0.011612216,\n        -0.021738604,\n        0.04465516,\n        -0.029448846,\n        0.043343347,\n        -0.010461033,\n        -0.012100799,\n        0.014791353,\n        -0.025807898,\n        -0.0069472506,\n        -0.052900836,\n        -0.010126388,\n        -0.020319704,\n        -0.0010323828,\n        0.030840974,\n        -0.03491027,\n        -0.015380329,\n        -0.0077169365,\n        0.022434667,\n        -0.0013193418,\n        -0.0052940995,\n        -0.020627579,\n        0.010762215,\n        -0.013024421,\n        0.012743319,\n        -0.012201193,\n        0.028163806,\n        0.0030452784,\n        -0.026584277,\n        0.017093716,\n        -0.040612638,\n        -0.03474964,\n        0.0053476426,\n        -0.007850795,\n        0.024241755,\n        0.004330319,\n        0.04355752,\n        0.01359332,\n        0.008941741,\n        0.09985836,\n        -0.039648857,\n        0.0008725894,\n        0.025272464,\n        0.011833082,\n        -0.015246471,\n        0.017776394,\n        0.024308683,\n        0.018967735,\n        0.033652,\n        0.019864585,\n        -0.0026788411,\n        0.041067757,\n        0.02918113,\n        0.015487416,\n        0.023786636,\n        0.033518143,\n        0.023157502,\n        -0.029395303,\n        0.026129158,\n        -0.0023826794,\n        0.0074090622,\n        -0.0076901647,\n        -0.0028411443,\n        -0.0045679174,\n        -0.0073689045,\n        -0.010159852,\n        0.0030436052,\n        0.023599235,\n        0.026611049,\n        -0.0077236295,\n        -0.02409451,\n        0.007081109,\n        0.017428363,\n        -0.018526,\n        0.0029381916,\n        -0.011900011,\n        -0.029529162,\n        -0.032634676,\n        0.019971672,\n        -0.010916152,\n        0.036918145,\n        -0.024214983,\n        -0.0036877987,\n        0.004671658,\n        0.017254347,\n        0.025874827,\n        -0.043129176,\n        0.023786636,\n        0.030466171,\n        0.006702959,\n        0.031055147,\n        0.006789967,\n        0.0077102436,\n        0.027374042,\n        0.024281912,\n        -0.022541754,\n        0.008935047,\n        0.009898828,\n        -0.035204757,\n        -0.0044273664,\n        -0.019837813,\n        -0.03713232,\n        -0.002146754,\n        0.018994506,\n        -0.024991361,\n        -0.019918129,\n        0.020051988,\n        -0.018204741,\n        0.018392144,\n        -0.026329946,\n        0.008493315,\n        0.021952776,\n        0.031804755,\n        0.0032611252,\n        0.010963002,\n        0.0010884361,\n        -0.016103165,\n        -0.03541893,\n        -0.0012030524,\n        -0.044414215,\n        0.01914175,\n        -0.021711832,\n        0.024482701,\n        -0.015808675,\n        0.0012540858,\n        -0.0021300216,\n        -0.021377185,\n        0.033116568,\n        -0.0017016748,\n        -0.028056718,\n        -0.0017702773,\n        0.012375209,\n        0.017441748,\n        0.014309462,\n        -0.0030486248,\n        0.0005994346,\n        0.024295298,\n        -0.029368531,\n        0.015420487,\n        0.008533472,\n        0.008981898,\n        -0.00027859278,\n        -0.058737062,\n        -0.015594503,\n        0.010942924,\n        -0.012542532,\n        -0.05314178,\n        -0.003550594,\n        -0.030091366,\n        0.070409514,\n        0.01811104,\n        0.0354457,\n        -0.031483494,\n        0.015366944,\n        0.018124426,\n        0.029609477,\n        0.03999689,\n        0.010822451,\n        -0.028940184,\n        -0.027789002,\n        -0.022140179,\n        0.030894518,\n        -0.0077972515,\n        -0.013372454,\n        0.0006140754,\n        -0.019382695,\n        0.040103976,\n        -0.04786776,\n        -0.009202764,\n        0.007228353,\n        -0.034160662,\n        0.008921662,\n        0.013004343,\n        -0.0030318927,\n        0.036650427,\n        -0.032340188,\n        0.013312217,\n        0.01020001,\n        0.016625213,\n        0.024348842,\n        -0.023465376,\n        0.014416549,\n        0.0022722462,\n        0.0065958723,\n        0.004511028,\n        0.024295298,\n        -0.019436238,\n        -0.01923545,\n        -0.01856616,\n        0.0073889834,\n        0.015621275,\n        0.037400033,\n        -0.0119602475,\n        0.0034803182,\n        0.00017161065,\n        -0.031670894,\n        0.0007044298,\n        0.0004254187,\n        0.0029298256,\n        -0.037400033,\n        0.0008960146,\n        -0.0019928168,\n        0.039166965,\n        -0.0126563115,\n        -0.011725995,\n        -0.019128364,\n        0.025593724,\n        0.010755522,\n        -0.0028595498,\n        -0.030171681,\n        -0.0044842563,\n        -0.02776223,\n        0.013620092,\n        -0.0052204775,\n        0.016718913,\n        0.009075599,\n        0.0169197,\n        -0.05228509,\n        0.034562238,\n        -0.0062043364,\n        0.04152287,\n        0.0057692965,\n        -0.014751195,\n        0.008653945,\n        0.0034334678,\n        -0.0010123041,\n        -0.004564571,\n        -0.003835043,\n        -0.01132442,\n        0.02606223,\n        -0.0074023693,\n        -0.0031557116,\n        0.019476397,\n        -0.001277511,\n        0.019503169,\n        0.015674818,\n        -0.012622846,\n        -0.0073755975,\n        -0.021899233,\n        -0.004260043,\n        -0.021229941,\n        -0.01914175,\n        0.026878765,\n        -0.005203745,\n        0.02223388,\n        0.028163806,\n        0.03413389,\n        -0.003661027,\n        -0.02232758,\n        -0.010173238,\n        -0.012047255,\n        -0.0019911437,\n        0.0368646,\n        0.037881926,\n        0.0044273664,\n        -0.011257491,\n        -0.00053459697,\n        -0.046207916,\n        -0.014644108,\n        0.002118309,\n        -0.02966302,\n        0.039140195,\n        -0.015179542,\n        -0.019637026,\n        -0.011672452,\n        0.01621025,\n        0.0044340594,\n        -0.006994101,\n        -0.019342538,\n        0.008386228,\n        0.010748829,\n        0.0116925305,\n        -0.012970878,\n        0.01875356,\n        -0.030894518,\n        -0.015085841,\n        0.009209458,\n        0.016103165,\n        -0.016263794,\n        0.025794512,\n        -0.018191356,\n        0.011672452,\n        -0.009637805,\n        -0.0040124054,\n        0.032741763,\n        0.016317338,\n        -0.010253553,\n        -0.01914175,\n        0.005561816,\n        -0.008827961,\n        0.025714198,\n        0.014577179,\n        -0.0054614223,\n        -0.018847262,\n        0.023679549,\n        -0.020640964,\n        0.014081903,\n        -0.005883076,\n        0.003995673,\n        0.048992172,\n        -0.026999237,\n        0.0026135852,\n        0.0037881925,\n        0.013098043,\n        -0.03632917,\n        -0.010106308,\n        0.033759087,\n        -0.02776223,\n        0.02968979,\n        -0.016076393,\n        -0.011424813,\n        0.025299236,\n        0.00836615,\n        -0.033357512,\n        -0.036436256,\n        -0.008720874,\n        -0.0036844523,\n        0.0016297259,\n        -0.03670397,\n        0.028592153,\n        0.014898439,\n        -0.003378251,\n        0.025326008,\n        -0.016531512,\n        -0.0009955718,\n        0.0040291375,\n        0.02239451,\n        -0.003741342,\n        0.007603157,\n        0.04179059,\n        0.008781111,\n        0.0077972515,\n        -0.0016514779,\n        -0.02139057,\n        -0.0146842655,\n        0.010949616,\n        -0.022501595,\n        0.007168117,\n        -0.02487089,\n        0.011297649,\n        0.02232758,\n        -0.008192134,\n        -0.012502374,\n        -0.013573241,\n        0.009001977,\n        -0.021832304,\n        0.021765376,\n        0.020239389,\n        -0.01724096,\n        -0.0398898,\n        0.041389015,\n        -0.0130846575,\n        0.010655128,\n        0.012154342,\n        0.040933896,\n        -0.017107103,\n        0.025366165,\n        -0.015072455,\n        0.05723785,\n        0.016852772,\n        -0.0012331704,\n        0.014095289,\n        0.009537411,\n        -0.017870095,\n        -0.0060537457,\n        -0.009537411,\n        0.01737482,\n        -0.027789002,\n        0.0073889834,\n        0.019717341,\n        -0.0030402588,\n        0.039033107,\n        0.012890563,\n        0.02744097,\n        -0.028458294,\n        0.0101531595,\n        0.0096779615,\n        -0.017281119,\n        -0.030680344,\n        0.0032912432,\n        -0.028833099,\n        0.013934659,\n        -0.034214206,\n        0.010614971,\n        -0.009878749,\n        -0.030974831,\n        -0.03713232,\n        -0.015420487,\n        -0.00065214135,\n        -0.00008836745,\n        0.028458294,\n        -0.005842919,\n        0.0024178172,\n        0.030037824,\n        0.0077905585,\n        0.004708469,\n        -0.015487416,\n        -0.04195122,\n        -0.0040425234,\n        -0.03699846,\n        0.0033364205,\n        0.022929942,\n        0.01563466,\n        -0.0056086667,\n        -0.012442138,\n        -0.021176398,\n        0.013185051,\n        0.0214575,\n        0.014577179,\n        -0.03445515,\n        -0.020306319,\n        -0.018070882,\n        -0.013372454,\n        0.008292528,\n        -0.019489782,\n        -0.012100799,\n        0.042299252,\n        0.032259874,\n        0.043905552,\n        -0.0052137845,\n        0.0290205,\n        -0.0017736237,\n        0.014014973,\n        0.03812287,\n        -0.016651984,\n        0.027708687,\n        -0.008566937,\n        0.043263033\n      ]",
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -1296
+      ],
+      "id": "c505b074-362b-4591-afb2-cfec0f66d96e",
+      "name": "Near vector search",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "operation": "nearObject",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "objectId": "={{ $json.id }}",
+        "additionalOptions": {
+          "returnDistance": true
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -1296
+      ],
+      "id": "a5110bb1-f4e3-4e6d-bce4-da4865adecc1",
+      "name": "Near object search",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collectionName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "MTCollection"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        192
+      ],
+      "id": "73976010-239f-4931-8de7-14d1d2a6c072",
+      "name": "Delete a MTCollection",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collectionName": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        -1072
+      ],
+      "id": "e33a7ca3-7511-4ed7-95b6-cb73d0eb040d",
+      "name": "Delete a FilterTest Collection",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collectionConfig": "{\n  \"class\": \"FilterTest\"\n}"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        -1072
+      ],
+      "id": "6872fc75-b4e2-4b92-8c5d-7f19bb98a60a",
+      "name": "Create a FilterTest Collection",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "insertMany",
+        "collection": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        },
+        "objects": "[\n  {\n    \"properties\": {\n      \"name\": \"Item 1\",\n      \"status\": \"published\",\n      \"category\": \"electronics\",\n      \"price\": 299.99,\n      \"rating\": 4.5,\n      \"inStock\": true,\n      \"tags\": [\"featured\", \"sale\"]\n    }\n  },\n  {\n    \"properties\": {\n      \"name\": \"Item 2\",\n      \"status\": \"draft\",\n      \"category\": \"electronics\",\n      \"price\": 149.99,\n      \"rating\": 3.8,\n      \"inStock\": true,\n      \"tags\": [\"new\"]\n    }\n  },\n  {\n    \"properties\": {\n      \"name\": \"Item 3\",\n      \"status\": \"published\",\n      \"category\": \"books\",\n      \"price\": 29.99,\n      \"rating\": 4.9,\n      \"inStock\": false,\n      \"tags\": [\"featured\", \"bestseller\"]\n    }\n  },\n  {\n    \"properties\": {\n      \"name\": \"Item 4\",\n      \"status\": \"archived\",\n      \"category\": \"books\",\n      \"price\": 19.99,\n      \"rating\": 3.2,\n      \"inStock\": false,\n      \"tags\": [\"clearance\"]\n    }\n  }\n]",
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        -1072
+      ],
+      "id": "f747d391-a757-47ee-b92c-23fc2b3afe98",
+      "name": "Insert many objects to filter",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getMany",
+        "collection": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        },
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -1072
+      ],
+      "id": "a2906602-6387-448f-bd28-a5643bb08cdd",
+      "name": "Get many objects No Filter",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getMany",
+        "collection": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        },
+        "additionalOptions": {
+          "whereFilter": "{\n  \"path\": [\"status\"],\n  \"operator\": \"Equal\",\n  \"valueText\": \"published\"\n}"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -1072
+      ],
+      "id": "99b8c5a1-d0b7-470e-9b58-c35265f278f9",
+      "name": "Get many objects: Filter Published only",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getMany",
+        "collection": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        },
+        "additionalOptions": {
+          "whereFilter": "{\n  \"path\": [\"price\"],\n  \"operator\": \"GreaterThan\",\n  \"valueNumber\": 1\n}"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        -848
+      ],
+      "id": "70d95c8b-37a2-4ae2-975d-8f9aec487240",
+      "name": "Get many objects: Filter Price Greater than 50",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getMany",
+        "collection": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        },
+        "additionalOptions": {
+          "whereFilter": "{\n  \"path\": [\"inStock\"],\n  \"operator\": \"Equal\",\n  \"valueBoolean\": true\n}"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -848
+      ],
+      "id": "b0320c2f-fc07-4736-bef1-edd677c63d02",
+      "name": "Get many objects: Filter inStock",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getMany",
+        "collection": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        },
+        "additionalOptions": {
+          "whereFilter": "{\n  \"operator\": \"And\",\n  \"operands\": [\n    {\n      \"path\": [\"status\"],\n      \"operator\": \"Equal\",\n      \"valueText\": \"published\"\n    },\n    {\n      \"path\": [\"category\"],\n      \"operator\": \"Equal\",\n      \"valueText\": \"electronics\"\n    }\n  ]\n}"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -848
+      ],
+      "id": "41e84377-089a-482c-bb09-51e3bf7667d4",
+      "name": "Get many objects: Filter Published and Electronic",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getMany",
+        "collection": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        },
+        "additionalOptions": {
+          "whereFilter": "{\n  \"operator\": \"And\",\n  \"operands\": [\n    {\n      \"path\": [\"tags\"],\n      \"operator\": \"ContainsAny\",\n      \"valueTextArray\": [\"new\", \"featured\"]\n    }\n  ]\n}"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -848
+      ],
+      "id": "6b53b46f-f1d2-40e7-bbcd-2f7240601085",
+      "name": "Get many objects: Filter Tags ContainsAny of new,featured",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "getMany",
+        "collection": {
+          "__rl": true,
+          "value": "FilterTest",
+          "mode": "list",
+          "cachedResultName": "FilterTest"
+        },
+        "additionalOptions": {
+          "whereFilter": "{\n  \"operator\": \"And\",\n  \"operands\": [\n    {\n      \"path\": [\"status\"],\n      \"operator\": \"NotEqual\",\n      \"valueText\": \"archived\"\n    },\n    {\n      \"operator\": \"Or\",\n      \"operands\": [\n        {\n          \"path\": [\"rating\"],\n          \"operator\": \"GreaterThanEqual\",\n          \"valueNumber\": 4.5\n        },\n        {\n          \"path\": [\"price\"],\n          \"operator\": \"LessThan\",\n          \"valueNumber\": 30\n        }\n      ]\n    }\n  ]\n}",
+          "includeVectors": true
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -848
+      ],
+      "id": "3fc89baf-3e2f-4a27-8ea7-ef41226d90b4",
+      "name": "Get many objects: Filter Tags ContainsAny of new,featured1",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## COHERE MULTIMODAL: TEXT + IMAGE",
+        "height": 560,
+        "width": 1472
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -2288
+      ],
+      "id": "9568d742-3932-4dc3-863f-4cfad2eabbcd",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collectionName": {
+          "__rl": true,
+          "value": "MultiModal",
+          "mode": "name"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -944,
+        -2192
+      ],
+      "id": "8dfed710-c1fe-4205-8173-64a1c84c7f49",
+      "name": "Delete a collection4",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collectionConfig": "{\n  \"class\": \"MultiModal\",\n  \"properties\": [\n    {\n      \"name\": \"title\",\n      \"dataType\": [\n        \"text\"\n      ],\n      \"indexFilterable\": true,\n      \"indexSearchable\": true,\n      \"tokenization\": \"word\",\n      \"indexRangeFilters\": false\n    },\n    {\n      \"name\": \"poster\",\n      \"dataType\": [\n        \"blob\"\n      ],\n      \"indexFilterable\": true,\n      \"indexSearchable\": false,\n      \"indexRangeFilters\": false\n    }\n  ],\n  \"vectorConfig\": {\n    \"default\": {\n      \"vectorizer\": {\n        \"multi2vec-cohere\": {\n          \"imageFields\": [\n            \"poster\"\n          ],\n          \"textFields\": [\n            \"title\"\n          ],\n          \"weights\": {\n            \"imageFields\": [\n              0.9\n            ],\n            \"textFields\": [\n              0.1\n            ]\n          }\n        }\n      },\n      \"vectorIndexType\": \"hnsw\"\n    }\n  }\n}"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        -2192
+      ],
+      "id": "4b050776-32bb-4707-b115-639af2feb538",
+      "name": "Create a collection1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        -1600
+      ],
+      "id": "aff4a84c-1e1d-4fec-ab7c-b868c5f22a39",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -2192
+      ],
+      "id": "e2c88855-c609-4a9d-9fc0-6e50f9484ab6",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.poster_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -112,
+        -2192
+      ],
+      "id": "5b491e52-1c0c-463c-8acc-68909ce5af0a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        -2192
+      ],
+      "id": "532a70b0-8cb5-4fa3-9dd3-be20e542b1f2",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"items\": [\n    {\"title\": \"The Matrix\", \"poster_url\": \"https://www.themoviedb.org/t/p/w1280/lDqMDI3xpbB9UQRyeXfei0MXhqb.jpg\"},\n    {\"title\": \"La La land\", \"poster_url\": \"https://www.themoviedb.org/t/p/w1280/AvMietG6xuobpSSdmVnKuTjv4bL.jpg\"},\n    {\"title\": \"Jaws\", \"poster_url\": \"https://www.themoviedb.org/t/p/w1280/tjbLSFwi0I3phZwh8zoHWNfbsEp.jpg\"}\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -528,
+        -2192
+      ],
+      "id": "75e970a9-b332-4f0f-bd04-9dec24cd89a5",
+      "name": "Define Movie Title and Posters"
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "collection": {
+          "__rl": true,
+          "value": "MultiModal",
+          "mode": "list",
+          "cachedResultName": "MultiModal"
+        },
+        "properties": "={\n  \"title\": \"{{ $('Split Out').item.json.title }}\",\n  \"poster\": \"{{ $json.data }}\"\n} ",
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -928,
+        -1952
+      ],
+      "id": "53417b51-acbd-4ca2-b1bc-04eb5d33a664",
+      "name": "Insert an object1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "collection": {
+          "__rl": true,
+          "value": "MultiModal",
+          "mode": "list",
+          "cachedResultName": "MultiModal"
+        },
+        "queryText": "Romance",
+        "additionalOptions": {
+          "returnDistance": true
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -1952
+      ],
+      "id": "16e34ee7-5f24-4f2a-a5d7-491dbfdaa7e1",
+      "name": "Near text search1",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "operation": "nearImage",
+        "collection": {
+          "__rl": true,
+          "value": "MultiModal",
+          "mode": "list",
+          "cachedResultName": "MultiModal"
+        },
+        "imageData": "={{ $json.data }}",
+        "additionalOptions": {
+          "autocut": 1,
+          "returnDistance": true
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        -1952
+      ],
+      "id": "3703362c-b15c-4d2c-9742-a269192d75c4",
+      "name": "Near image search",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.themoviedb.org/t/p/w1280/gsP6XfyRu0b3RqxN3rt09Yc9S74.jpg",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -512,
+        -1952
+      ],
+      "id": "f611f8fc-dcab-43eb-b725-d602bf70d7a2",
+      "name": "HTTP Request1",
+      "executeOnce": true,
+      "notes": "Shark documentary: https://www.themoviedb.org/tv/65165-shark"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -304,
+        -1952
+      ],
+      "id": "c3d3530f-c142-495a-94bd-acde3d6aef47",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        -1360
+      ],
+      "id": "b435ae49-3055-4d00-91ed-4e728095101f",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1824,
+        -688
+      ],
+      "id": "cea146fb-ab4b-42ff-ac09-667c8c1ea8c1",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "url": "https://www.themoviedb.org/t/p/w1280/wRAOmmAVxpYKHRT1ZIbcWz4pUTe.jpghttps://www.themoviedb.org/t/p/w1280/wRAOmmAVxpYKHRT1ZIbcWz4pUTe.jpg",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        96,
+        -1952
+      ],
+      "id": "cd52a966-d420-4b62-9c51-c2c4b8d5cf2e",
+      "name": "HTTP Request2",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "content": "## GENERATIVE and RERANKER",
+        "height": 336,
+        "width": 1472
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -576
+      ],
+      "id": "29e0ca7d-93cb-402b-8ad6-0e701276fda5",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        -1024
+      ],
+      "id": "0516f4a9-7829-4e48-a4d3-4994e74030c6",
+      "name": "No Operation, do nothing3"
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "queryText": "domestic animals",
+        "enableGenerative": true,
+        "generativeOptions": {
+          "modelProvider": "openai",
+          "singlePrompt": "Translate to Portuguese. Be literal and only return the translated text: {text} ",
+          "groupedTask": "Create a poem about the referenced animals and Artificial Intelligence"
+        },
+        "additionalOptions": {
+          "returnFormat": "perObject"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -464
+      ],
+      "id": "b2722a3c-da16-48a2-908c-c2b0b356b6ad",
+      "name": "Generative NearText with Objects per Item return format",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "collection": {
+          "__rl": true,
+          "value": "SearchTest",
+          "mode": "list",
+          "cachedResultName": "SearchTest"
+        },
+        "queryText": "domestic animals",
+        "enableGenerative": true,
+        "generativeOptions": {
+          "modelProvider": "openai",
+          "singlePrompt": "Translate to Portuguese. Be literal and only return the translated text: {text} ",
+          "groupedTask": "Create a poem about the referenced animals and Artificial Intelligence"
+        },
+        "additionalOptions": {
+          "returnFormat": "singleItem"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        -464
+      ],
+      "id": "c65b53d7-86f5-47cf-9906-57290491b096",
+      "name": "Generative NearText with Objects per Item return format1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collectionConfig": "{\n  \"class\": \"RerankerTest\",\n  \"moduleConfig\": {\n    \"reranker-cohere\": {}\n  },\n  \"vectorConfig\": {\n    \"default\": {\n      \"vectorizer\": {\n        \"text2vec-openai\": {}\n      },\n      \"vectorIndexType\": \"hnsw\"\n    }\n  }\n}"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -464
+      ],
+      "id": "88854b41-ef87-4c1c-9448-a69253163849",
+      "name": "Create a collection2",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "object",
+        "operation": "insertMany",
+        "collection": {
+          "__rl": true,
+          "value": "RerankerTest",
+          "mode": "list",
+          "cachedResultName": "RerankerTest"
+        },
+        "objects": "[\n  {\"properties\": {\"text\": \"A dog can bark out loud\"}},\n  {\"properties\": {\"text\": \"The lion is the king of the forest\"}},\n  {\"properties\": {\"text\": \"A cat can climb trees\"}},\n  {\"properties\": {\"text\": \"Giraffes are tall animals\"}}\n]",
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -464
+      ],
+      "id": "41ef8610-eb56-4f95-a828-2bac4673dd86",
+      "name": "Insert many objects1",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collectionName": {
+          "__rl": true,
+          "value": "RerankerTest",
+          "mode": "list",
+          "cachedResultName": "RerankerTest"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        -464
+      ],
+      "id": "c297b646-9843-4bc9-8526-60f142cb1116",
+      "name": "Delete a collection1",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "collection": {
+          "__rl": true,
+          "value": "RerankerTest",
+          "mode": "list",
+          "cachedResultName": "RerankerTest"
+        },
+        "queryText": "jungle or zoo animals",
+        "additionalOptions": {
+          "rerank": "{\"property\" : \"text\", \"query\": \"Big size predator\"}",
+          "returnDistance": true
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -464
+      ],
+      "id": "522549f5-6d32-4566-a000-97ac1fcd00da",
+      "name": "Near text search2",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collectionConfig": "{\n  \"class\": \"Collection1\"\n}"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        896
+      ],
+      "id": "7873e89e-b044-49e0-b314-2535143912e2",
+      "name": "Create a collection1 to delete",
+      "executeOnce": true,
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collectionConfig": "{\n  \"class\": \"Collection2\"\n}"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        896
+      ],
+      "id": "f89d7128-1903-4fc7-b4e9-2172b4b6cf4f",
+      "name": "Create a collection2 to delete",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteAll"
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        944,
+        464
+      ],
+      "id": "740c958d-9cf0-41b2-a171-070e9dbe8376",
+      "name": "Delete all collections",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collectionName": {
+          "__rl": true,
+          "value": "Collection1,Collection2, GenerativeReranker, MyCollection, MTCollection,FilterTest,MultiModal,RerankerTest,SearchTest",
+          "mode": "name"
+        }
+      },
+      "type": "CUSTOM.weaviate",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        896
+      ],
+      "id": "3664fb7c-5bee-47f8-9d76-ec58a9b9c842",
+      "name": "Delete Multiple Collections",
+      "credentials": {
+        "weaviateApi": {
+          "id": "8RemPqAa38Khatq3",
+          "name": "Weaviate Credentials account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a collection": {
+      "main": [
+        [
+          {
+            "node": "Create a collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a collection": {
+      "main": [
+        [
+          {
+            "node": "List collections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a collection": {
+      "main": [
+        [
+          {
+            "node": "Check if collection exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List collections": {
+      "main": [
+        [
+          {
+            "node": "Get a collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if collection exists": {
+      "main": [
+        [
+          {
+            "node": "Delete a MTCollection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a MT Collection": {
+      "main": [
+        [
+          {
+            "node": "Create a tenant1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a tenant1": {
+      "main": [
+        [
+          {
+            "node": "Create a tenant2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a tenant2": {
+      "main": [
+        [
+          {
+            "node": "Delete a tenant2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a tenant2": {
+      "main": [
+        [
+          {
+            "node": "Check if tenant2 exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if tenant2 exists": {
+      "main": [
+        [
+          {
+            "node": "Insert an object in ST Collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert an object in ST Collection": {
+      "main": [
+        [
+          {
+            "node": "Get an object by ID in ST Collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an object by ID in ST Collection": {
+      "main": [
+        [
+          {
+            "node": "Create a tenant2 again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a tenant2 again": {
+      "main": [
+        [
+          {
+            "node": "Insert an object in MTCollection tenant1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert an object in MTCollection tenant1": {
+      "main": [
+        [
+          {
+            "node": "Insert an object in MTCollection tenant2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert an object in MTCollection tenant2": {
+      "main": [
+        [
+          {
+            "node": "Get an object by ID in MTCollection tenant1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an object by ID in MTCollection tenant1": {
+      "main": [
+        [
+          {
+            "node": "Inactivate MTCollection T1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inactivate MTCollection T1": {
+      "main": [
+        [
+          {
+            "node": "List all tenants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List all tenants": {
+      "main": [
+        [
+          {
+            "node": "List backups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List backups": {
+      "main": [
+        [
+          {
+            "node": "Create a backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a backup": {
+      "main": [
+        [
+          {
+            "node": "Delete a collection2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a collection2": {
+      "main": [
+        [
+          {
+            "node": "Check if collection exists1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if collection exists1": {
+      "main": [
+        [
+          {
+            "node": "Restore a backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore a backup": {
+      "main": [
+        [
+          {
+            "node": "Check if collection exists2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a collection3": {
+      "main": [
+        [
+          {
+            "node": "Create a collection SearchTest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a collection SearchTest": {
+      "main": [
+        [
+          {
+            "node": "Insert an object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert an object": {
+      "main": [
+        [
+          {
+            "node": "Insert many objects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert many objects": {
+      "main": [
+        [
+          {
+            "node": "Aggregate collection data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate collection data": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Near text search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Near text search": {
+      "main": [
+        [
+          {
+            "node": "Hybrid search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hybrid search": {
+      "main": [
+        [
+          {
+            "node": "Bm25 search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bm25 search": {
+      "main": [
+        [
+          {
+            "node": "Near vector search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Near vector search": {
+      "main": [
+        [
+          {
+            "node": "Near object search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a MTCollection": {
+      "main": [
+        [
+          {
+            "node": "Create a MT Collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Near object search": {
+      "main": [
+        [
+          {
+            "node": "Delete a FilterTest Collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a FilterTest Collection": {
+      "main": [
+        [
+          {
+            "node": "Create a FilterTest Collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a FilterTest Collection": {
+      "main": [
+        [
+          {
+            "node": "Insert many objects to filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert many objects to filter": {
+      "main": [
+        [
+          {
+            "node": "Get many objects No Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many objects No Filter": {
+      "main": [
+        [
+          {
+            "node": "Get many objects: Filter Published only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many objects: Filter Published only": {
+      "main": [
+        [
+          {
+            "node": "Get many objects: Filter Price Greater than 50",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many objects: Filter Price Greater than 50": {
+      "main": [
+        [
+          {
+            "node": "Get many objects: Filter inStock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many objects: Filter inStock": {
+      "main": [
+        [
+          {
+            "node": "Get many objects: Filter Published and Electronic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many objects: Filter Published and Electronic": {
+      "main": [
+        [
+          {
+            "node": "Get many objects: Filter Tags ContainsAny of new,featured",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many objects: Filter Tags ContainsAny of new,featured": {
+      "main": [
+        [
+          {
+            "node": "Get many objects: Filter Tags ContainsAny of new,featured1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a collection4": {
+      "main": [
+        [
+          {
+            "node": "Create a collection1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Delete a collection4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a collection1": {
+      "main": [
+        [
+          {
+            "node": "Define Movie Title and Posters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Define Movie Title and Posters": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Insert an object1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert an object1": {
+      "main": [
+        [
+          {
+            "node": "Near text search1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Near text search1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Near image search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Delete a collection3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing2": {
+      "main": [
+        [
+          {
+            "node": "Delete a collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Near image search": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        []
+      ]
+    },
+    "No Operation, do nothing3": {
+      "main": [
+        [
+          {
+            "node": "Generative NearText with Objects per Item return format1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generative NearText with Objects per Item return format": {
+      "main": [
+        [
+          {
+            "node": "Delete a collection1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generative NearText with Objects per Item return format1": {
+      "main": [
+        [
+          {
+            "node": "Generative NearText with Objects per Item return format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a collection2": {
+      "main": [
+        [
+          {
+            "node": "Insert many objects1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a collection1": {
+      "main": [
+        [
+          {
+            "node": "Create a collection2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert many objects1": {
+      "main": [
+        [
+          {
+            "node": "Near text search2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Near text search2": {
+      "main": [
+        []
+      ]
+    },
+    "Check if collection exists2": {
+      "main": [
+        [
+          {
+            "node": "Create a collection1 to delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a collection1 to delete": {
+      "main": [
+        [
+          {
+            "node": "Create a collection2 to delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a collection2 to delete": {
+      "main": [
+        [
+          {
+            "node": "Delete Multiple Collections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e2b0f2ea-70c6-41a1-9f46-c7f8c4e5f9e0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "20bb0a1b6cc8ce7d92b635f67094e2bc7716b4282c67d5ec49c0ddd2cdf10f1d"
+  },
+  "id": "kFRhUz1pd04etFA6vS_iF",
+  "tags": []
+}

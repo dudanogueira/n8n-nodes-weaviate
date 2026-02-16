@@ -2,6 +2,7 @@
 import type { IExecuteFunctions } from 'n8n-workflow';
 import { execute as createExecute } from '../../operations/collection/create';
 import { execute as deleteExecute } from '../../operations/collection/delete';
+import { execute as deleteAllExecute } from '../../operations/collection/deleteAll';
 import { execute as existsExecute } from '../../operations/collection/exists';
 import { execute as getExecute } from '../../operations/collection/get';
 import { execute as listExecute } from '../../operations/collection/list';
@@ -10,6 +11,7 @@ import { execute as aggregateExecute } from '../../operations/collection/aggrega
 // Mock do cliente Weaviate
 const mockClose = jest.fn();
 const mockCollectionsDelete = jest.fn();
+const mockCollectionsDeleteAll = jest.fn();
 const mockCollectionsExists = jest.fn();
 const mockCollectionsListAll = jest.fn();
 const mockAggregateOverAll = jest.fn();
@@ -30,6 +32,7 @@ jest.mock('../../helpers/client', () => ({
 		return {
 			collections: {
 				delete: mockCollectionsDelete,
+				deleteAll: mockCollectionsDeleteAll,
 				exists: mockCollectionsExists,
 				listAll: mockCollectionsListAll,
 				get: jest.fn(() => ({
@@ -165,6 +168,87 @@ describe('Weaviate Collection Operations', () => {
 
 			expect(mockCollectionsDelete).toHaveBeenCalledWith('TestCollection');
 			expect(result[0].json.collectionName).toBe('TestCollection');
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should delete multiple collections successfully', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockReturnValue('Collection1,Collection2,Collection3');
+
+			const result = await deleteExecute.call(executeFunctions, 0);
+
+			expect(mockCollectionsDelete).toHaveBeenCalledTimes(3);
+			expect(mockCollectionsDelete).toHaveBeenCalledWith('Collection1');
+			expect(mockCollectionsDelete).toHaveBeenCalledWith('Collection2');
+			expect(mockCollectionsDelete).toHaveBeenCalledWith('Collection3');
+			expect(result).toHaveLength(1);
+			expect(result[0].json).toMatchObject({
+				success: true,
+				totalCollections: 3,
+				successCount: 3,
+				failureCount: 0,
+			});
+			expect(result[0].json.collections).toHaveLength(3);
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should handle partial failures when deleting multiple collections', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockReturnValue('Collection1,Collection2,Collection3');
+
+			mockCollectionsDelete
+				.mockResolvedValueOnce(undefined)
+				.mockRejectedValueOnce(new Error('Collection not found'))
+				.mockResolvedValueOnce(undefined);
+
+			const result = await deleteExecute.call(executeFunctions, 0);
+
+			expect(mockCollectionsDelete).toHaveBeenCalledTimes(3);
+			expect(result[0].json).toMatchObject({
+				success: true,
+				totalCollections: 3,
+				successCount: 2,
+				failureCount: 1,
+			});
+			expect((result[0].json.collections as any)[1]).toMatchObject({
+				collectionName: 'Collection2',
+				success: false,
+				error: 'Collection not found',
+			});
+			expect(mockClose).toHaveBeenCalled();
+		});
+
+		it('should handle empty collection names gracefully', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockReturnValue('Collection1, , Collection2,  ,');
+
+			const result = await deleteExecute.call(executeFunctions, 0);
+
+			expect(mockCollectionsDelete).toHaveBeenCalledTimes(2);
+			expect(result[0].json.totalCollections).toBe(2);
+		});
+
+		it('should throw error when no collections provided', async () => {
+			(executeFunctions.getNodeParameter as jest.Mock).mockReturnValue('');
+
+			await expect(deleteExecute.call(executeFunctions, 0)).rejects.toThrow(
+				'At least one collection name must be provided',
+			);
+		});
+	});
+
+	describe('deleteAll', () => {
+		beforeEach(() => {
+			mockCollectionsDeleteAll.mockResolvedValue(undefined);
+		});
+
+		it('should delete all collections successfully', async () => {
+			const result = await deleteAllExecute.call(executeFunctions, 0);
+
+			expect(mockCollectionsDeleteAll).toHaveBeenCalled();
+			expect(result).toHaveLength(1);
+			expect(result[0].json).toMatchObject({
+				success: true,
+				message: 'All collections deleted successfully',
+			});
+			expect(result[0].json.metadata).toBeDefined();
 			expect(mockClose).toHaveBeenCalled();
 		});
 	});
