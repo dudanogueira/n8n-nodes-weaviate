@@ -25,6 +25,7 @@ export async function execute(
 		returnCreationTime?: boolean;
 		targetVector?: string;
 		rerank?: string;
+		returnFormat?: string;
 	};
 
 	const client = await getWeaviateClient.call(this, itemIndex);
@@ -92,6 +93,37 @@ export async function execute(
 
 		const result = await collection.query.hybrid(query, queryOptions);
 
+		const returnFormat = additionalOptions.returnFormat || 'perObject';
+
+		if (returnFormat === 'singleItem') {
+			// Return entire result as a single item
+			return [{
+				json: {
+					objects: result.objects.map((obj: IDataObject) => ({
+						id: obj.uuid,
+						properties: obj.properties,
+						...(isNotEmpty(obj.vector) && { vector: obj.vector }),
+						...(isNotEmpty(obj.vectors) && { vectors: obj.vectors }),
+						metadata: {
+							score: (obj.metadata as IDataObject)?.score,
+							explainScore: (obj.metadata as IDataObject)?.explainScore,
+							creationTime: (obj.metadata as IDataObject)?.creationTime,
+						},
+					})),
+					metadata: {
+						totalCount: result.objects.length,
+						...buildOperationMetadata('search:hybrid', {
+							collectionName,
+							query,
+							alpha: additionalOptions.alpha,
+							resultCount: result.objects.length,
+						}),
+					},
+				},
+			}];
+		}
+
+		// Return each object as a separate item (default)
 		return result.objects.map((obj: IDataObject) => ({
 			json: {
 				id: obj.uuid,

@@ -23,6 +23,7 @@ Weaviate is an open-source vector database that stores both objects and vectors,
   - [Searching Data](#searching-data)
   - [Using Filters](#using-filters)
   - [Advanced Search Options](#advanced-search-options)
+  - [Return Format Options](#return-format-options)
 - [Examples](#examples)
 - [Troubleshooting](#troubleshooting)
 - [Resources](#resources)
@@ -67,6 +68,13 @@ Weaviate is an open-source vector database that stores both objects and vectors,
 - Username/password basic auth
 - Anonymous access for development
 
+🤖 **Retrieval-Augmented Generation (RAG)**
+- Enable generative search with any search operation
+- 14 LLM providers: OpenAI, Azure OpenAI, Anthropic, Cohere, Google, AWS Bedrock, Mistral, Anyscale, Ollama, NVIDIA, Databricks, FriendliAI, xAI, Contextual AI
+- Runtime model configuration - no infrastructure changes needed
+- Single prompt (per-result) and grouped task (combined results) generation
+- Full control over model parameters (temperature, max tokens, etc.)
+
 ## Installation
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
@@ -78,7 +86,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-This node supports 25 operations across 5 resources:
+This node supports 32 operations across 5 resources (all search operations support generative RAG):
 
 ### Collection (Schema Management)
 - **Create**: Create a new collection with custom schema and vectorizer configuration
@@ -101,6 +109,8 @@ This node supports 25 operations across 5 resources:
 - **Near Image**: Find similar objects using image similarity search
 - **Near Media**: Find similar objects using multi-modal media (audio, video, etc.)
 - **Hybrid**: Combined keyword + vector search with configurable weighting
+
+**✨ All search operations support Generative Search (RAG)** - Enable the "Enable Generative" toggle to combine search with LLM generation. Choose from 14 providers including OpenAI, Anthropic, Cohere, Google, AWS Bedrock, and more.
 
 ### Backup (Backup Management)
 - **Create**: Create a backup of your data
@@ -332,6 +342,193 @@ All search operations support these additional options:
 - **Alpha**: Balance between keyword (0.0) and vector (1.0) search
 - **Return Score**: Include BM25/hybrid scores in results
 - **Return Explain Score**: Include score explanation
+
+### Return Format Options
+
+All search and generative search operations support flexible result formatting through the **Return Format** option in **Additional Options**. This powerful feature lets you choose how results are structured in your n8n workflow.
+
+#### Format Types
+
+**1. Each Object Per Item (Default)**
+
+Returns each object as a separate n8n item. This is the default behavior and works great for:
+- Processing each result individually in downstream nodes
+- Using n8n's looping and item-based operations
+- Filtering or transforming individual results
+- Traditional n8n workflow patterns
+
+**Output structure:**
+```json
+// Item 1
+{
+  "id": "uuid-1",
+  "properties": {
+    "title": "Introduction to Vector Databases",
+    "content": "Vector databases are...",
+    "author": "Jane Doe"
+  },
+  "metadata": {
+    "distance": 0.15,
+    "certainty": 0.95,
+    "creationTime": "2024-01-15T10:30:00Z"
+  }
+}
+
+// Item 2
+{
+  "id": "uuid-2",
+  "properties": {
+    "title": "Advanced RAG Techniques",
+    "content": "Retrieval-augmented generation...",
+    "author": "John Smith"
+  },
+  "metadata": {
+    "distance": 0.23,
+    "certainty": 0.89
+  }
+}
+// ... one item per result
+```
+
+**2. All Objects in Single Item**
+
+Returns the entire result set as a single n8n item with an `objects` array. Perfect for:
+- Passing complete result sets to downstream nodes
+- Aggregate operations (count, sum, statistics)
+- Sending entire result sets to APIs or databases
+- Accessing query-level metadata (especially for generative operations)
+- Working with grouped generative results
+
+**Output structure:**
+```json
+{
+  "objects": [
+    {
+      "id": "uuid-1",
+      "properties": {
+        "title": "Introduction to Vector Databases",
+        "content": "Vector databases are..."
+      },
+      "metadata": {
+        "distance": 0.15,
+        "certainty": 0.95
+      }
+    },
+    {
+      "id": "uuid-2",
+      "properties": {
+        "title": "Advanced RAG Techniques",
+        "content": "Retrieval-augmented generation..."
+      },
+      "metadata": {
+        "distance": 0.23,
+        "certainty": 0.89
+      }
+    }
+  ],
+  "metadata": {
+    "totalCount": 2
+  }
+}
+```
+
+**For Generative Operations (Single Item format):**
+
+When using generative search with "All Objects in Single Item" format, the output includes both per-object generation and query-level grouped results:
+
+```json
+{
+  "objects": [
+    {
+      "id": "uuid-1",
+      "properties": {...},
+      "generative": {
+        "text": "Summary of this specific document...",
+        "metadata": {
+          "model": "gpt-4",
+          "tokens": 150
+        }
+      },
+      "metadata": {...}
+    },
+    {
+      "id": "uuid-2",
+      "properties": {...},
+      "generative": {
+        "text": "Summary of this document...",
+        "metadata": {
+          "model": "gpt-4",
+          "tokens": 142
+        }
+      },
+      "metadata": {...}
+    }
+  ],
+  "generative": {
+    "text": "Common themes across all documents: Vector databases enable...",
+    "metadata": {
+      "model": "gpt-4",
+      "tokens": 280
+    }
+  },
+  "metadata": {
+    "totalCount": 2,
+    "provider": "openai"
+  }
+}
+```
+
+#### When to Use Each Format
+
+**Use "Each Object Per Item" when:**
+- ✅ Processing results individually in your workflow
+- ✅ Using n8n's Split in Batches or loops
+- ✅ Filtering, transforming, or enriching each result separately
+- ✅ Building traditional data pipelines
+- ✅ You need per-object generative results only
+
+**Use "All Objects in Single Item" when:**
+- ✅ Sending the entire result set to an API or database
+- ✅ Performing aggregate operations (count, statistics)
+- ✅ Passing results to Code nodes for bulk processing
+- ✅ You need access to query-level metadata
+- ✅ Using grouped generative tasks (groupedTask)
+- ✅ Building summary or analysis workflows
+- ✅ Reducing the number of items in your workflow for efficiency
+
+#### Configuration
+
+In any search or generative search operation:
+1. Open **Additional Options**
+2. Set **Return Format** to your preferred option:
+   - `Each Object Per Item` (default)
+   - `All Objects in Single Item`
+
+#### Example Use Cases
+
+**Use Case 1: Individual Processing**
+```
+Search (Each Object Per Item)
+  → Loop over items
+  → Enrich each with external API
+  → Store individually
+```
+
+**Use Case 2: Bulk Operations**
+```
+Search (All Objects in Single Item)
+  → Code node: Calculate statistics
+  → HTTP Request: Send batch to API
+  → Database: Bulk insert
+```
+
+**Use Case 3: Generative Summary**
+```
+Search with Generative (All Objects in Single Item, groupedTask enabled)
+  → Access objects[] for individual results
+  → Access generative.text for overall summary
+  → Send combined report
+```
 
 ## Examples
 

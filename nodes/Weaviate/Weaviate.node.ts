@@ -25,7 +25,7 @@ export class Weaviate implements INodeType {
 		icon: 'file:weaviate.svg',
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{$parameter["resource"] + ": " + $parameter["operation"]}}',
+		subtitle: '={{($parameter["resource"] === "search" && $parameter["enableGenerative"]) ? "Search and Generative: " + $parameter["operation"] : $parameter["resource"] + ": " + $parameter["operation"]}}',
 		description: 'Interact with Weaviate vector database',
 		defaults: {
 			name: 'Weaviate',
@@ -175,8 +175,19 @@ export class Weaviate implements INodeType {
 					const { execute: executeObject } = await import(`./operations/object/${operation}`);
 					result = await executeObject.call(this, i);
 				} else if (resource === 'search') {
-					const { execute: executeSearch } = await import(`./operations/search/${operation}`);
-					result = await executeSearch.call(this, i);
+					const enableGenerative = this.getNodeParameter('enableGenerative', i, false) as boolean;
+
+					if (enableGenerative) {
+						// Route to generate operations
+						const { execute: executeGenerate } = await import(
+							`./operations/generate/${operation}`
+						);
+						result = await executeGenerate.call(this, i);
+					} else {
+						// Route to regular search operations
+						const { execute: executeSearch } = await import(`./operations/search/${operation}`);
+						result = await executeSearch.call(this, i);
+					}
 				} else if (resource === 'backup') {
 					const { execute: executeBackup } = await import(`./operations/backup/${operation}`);
 					result = await executeBackup.call(this, i);

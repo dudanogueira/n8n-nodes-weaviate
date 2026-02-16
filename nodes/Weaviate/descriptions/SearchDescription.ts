@@ -172,20 +172,20 @@ export const searchFields: INodeProperties[] = [
 				value: 'audio',
 			},
 			{
-				name: 'Video',
-				value: 'video',
-			},
-			{
 				name: 'Depth',
 				value: 'depth',
+			},
+			{
+				name: 'IMU',
+				value: 'imu',
 			},
 			{
 				name: 'Thermal',
 				value: 'thermal',
 			},
 			{
-				name: 'IMU',
-				value: 'imu',
+				name: 'Video',
+				value: 'video',
 			},
 		],
 		default: 'audio',
@@ -217,6 +217,941 @@ export const searchFields: INodeProperties[] = [
 				resource: ['search'],
 			},
 		},
+	},
+
+	// Enable Generative toggle
+	{
+		displayName: 'Enable Generative',
+		name: 'enableGenerative',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to enable retrieval-augmented generation (RAG) with LLM for search results',
+		displayOptions: {
+			show: {
+				resource: ['search'],
+			},
+		},
+	},
+
+	// Generative Options collection
+	{
+		displayName: 'Generative Options',
+		name: 'generativeOptions',
+		type: 'collection',
+		placeholder: 'Add Generation Option',
+		default: {},
+		displayOptions: {
+			show: {
+				resource: ['search'],
+				enableGenerative: [true],
+			},
+		},
+		// eslint-disable-next-line n8n-nodes-base/node-param-collection-type-unsorted-items -- Logical grouping (provider selection -> provider configs -> prompts) is better UX than alphabetical
+		options: [
+			// Model Provider Selection (first, so users choose provider before configuring prompts)
+			{
+				displayName: 'Model Provider',
+				name: 'modelProvider',
+				type: 'options',
+				default: 'openai',
+				options: [
+					{
+						name: 'Anthropic',
+						value: 'anthropic',
+					},
+					{
+						name: 'Anyscale',
+						value: 'anyscale',
+					},
+					{
+						name: 'AWS Bedrock',
+						value: 'aws',
+					},
+					{
+						name: 'Azure OpenAI',
+						value: 'azureOpenai',
+					},
+					{
+						name: 'Cohere',
+						value: 'cohere',
+					},
+					{
+						name: 'Contextual AI',
+						value: 'contextualai',
+					},
+					{
+						name: 'Databricks',
+						value: 'databricks',
+					},
+					{
+						name: 'FriendliAI',
+						value: 'friendliai',
+					},
+					{
+						name: 'Google (Gemini/Vertex)',
+						value: 'google',
+					},
+					{
+						name: 'Mistral',
+						value: 'mistral',
+					},
+					{
+						name: 'NVIDIA',
+						value: 'nvidia',
+					},
+					{
+						name: 'Ollama',
+						value: 'ollama',
+					},
+					{
+						name: 'OpenAI',
+						value: 'openai',
+					},
+					{
+						name: 'xAI (Grok)',
+						value: 'xai',
+					},
+				],
+				description: 'The LLM provider to use for generation',
+			},
+
+			// OpenAI Configuration
+			{
+				displayName: 'Model',
+				name: 'openaiModel',
+				type: 'string',
+				default: 'gpt-4',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['openai'],
+					},
+				},
+				description: 'OpenAI model to use (e.g., gpt-4, gpt-3.5-turbo, gpt-4-turbo)',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'openaiTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['openai'],
+					},
+				},
+				description: 'Sampling temperature (0-2). Higher values make output more random.',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'openaiMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['openai'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+			{
+				displayName: 'Frequency Penalty',
+				name: 'openaiFrequencyPenalty',
+				type: 'number',
+				default: 0,
+				typeOptions: {
+					minValue: -2,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['openai'],
+					},
+				},
+				description: 'Penalize new tokens based on their frequency in the text so far (-2 to 2)',
+			},
+			{
+				displayName: 'Presence Penalty',
+				name: 'openaiPresencePenalty',
+				type: 'number',
+				default: 0,
+				typeOptions: {
+					minValue: -2,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['openai'],
+					},
+				},
+				description: 'Penalize new tokens based on whether they appear in the text so far (-2 to 2)',
+			},
+			{
+				displayName: 'Top P',
+				name: 'openaiTopP',
+				type: 'number',
+				default: 1,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['openai'],
+					},
+				},
+				description: 'Nucleus sampling parameter (0-1). Consider only tokens with top_p probability mass.',
+			},
+
+			// Azure OpenAI Configuration
+			{
+				displayName: 'Model',
+				name: 'azureOpenaiModel',
+				type: 'string',
+				default: 'gpt-4',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['azureOpenai'],
+					},
+				},
+				description: 'Azure OpenAI model deployment name',
+			},
+			{
+				displayName: 'Resource Name',
+				name: 'azureOpenaiResourceName',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['azureOpenai'],
+					},
+				},
+				description: 'Azure OpenAI resource name',
+			},
+			{
+				displayName: 'Deployment ID',
+				name: 'azureOpenaiDeploymentId',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['azureOpenai'],
+					},
+				},
+				description: 'Azure OpenAI deployment ID',
+			},
+			{
+				displayName: 'API Version',
+				name: 'azureOpenaiApiVersion',
+				type: 'string',
+				default: '2024-02-01',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['azureOpenai'],
+					},
+				},
+				description: 'Azure OpenAI API version',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'azureOpenaiTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['azureOpenai'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'azureOpenaiMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['azureOpenai'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+
+			// Anthropic Configuration
+			{
+				displayName: 'Model',
+				name: 'anthropicModel',
+				type: 'options',
+				default: 'claude-3-5-sonnet-20241022',
+				options: [
+					{
+						name: 'Claude 3.5 Sonnet',
+						value: 'claude-3-5-sonnet-20241022',
+					},
+					{
+						name: 'Claude 3 Opus',
+						value: 'claude-3-opus-20240229',
+					},
+					{
+						name: 'Claude 3 Sonnet',
+						value: 'claude-3-sonnet-20240229',
+					},
+					{
+						name: 'Claude 3 Haiku',
+						value: 'claude-3-haiku-20240307',
+					},
+				],
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['anthropic'],
+					},
+				},
+				description: 'Anthropic Claude model to use',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'anthropicTemperature',
+				type: 'number',
+				default: 1.0,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['anthropic'],
+					},
+				},
+				description: 'Sampling temperature (0-1). Higher values make output more random.',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'anthropicMaxTokens',
+				type: 'number',
+				default: 1024,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['anthropic'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+			{
+				displayName: 'Top K',
+				name: 'anthropicTopK',
+				type: 'number',
+				default: 0,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['anthropic'],
+					},
+				},
+				description: 'Only sample from the top K options for each token',
+			},
+			{
+				displayName: 'Top P',
+				name: 'anthropicTopP',
+				type: 'number',
+				default: 1.0,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['anthropic'],
+					},
+				},
+				description: 'Nucleus sampling parameter (0-1)',
+			},
+
+			// Cohere Configuration
+			{
+				displayName: 'Model',
+				name: 'cohereModel',
+				type: 'string',
+				default: 'command-r-plus',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['cohere'],
+					},
+				},
+				description: 'Cohere model to use (e.g., command-r-plus, command-r, command)',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'cohereTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['cohere'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'cohereMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['cohere'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+			{
+				displayName: 'K',
+				name: 'cohereK',
+				type: 'number',
+				default: 0,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['cohere'],
+					},
+				},
+				description: 'Top-k sampling parameter',
+			},
+			{
+				displayName: 'P',
+				name: 'cohereP',
+				type: 'number',
+				default: 0.75,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['cohere'],
+					},
+				},
+				description: 'Top-p (nucleus) sampling parameter (0-1)',
+			},
+
+			// Google Configuration
+			{
+				displayName: 'Model',
+				name: 'googleModel',
+				type: 'string',
+				default: 'gemini-1.5-pro',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['google'],
+					},
+				},
+				description: 'Google model to use (e.g., gemini-1.5-pro, gemini-1.5-flash)',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'googleTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['google'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'googleMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['google'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+			{
+				displayName: 'Project ID',
+				name: 'googleProjectId',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['google'],
+					},
+				},
+				description: 'Google Cloud project ID (for Vertex AI)',
+			},
+
+			// AWS Bedrock Configuration
+			{
+				displayName: 'Model',
+				name: 'awsModel',
+				type: 'string',
+				default: 'anthropic.claude-3-sonnet-20240229-v1:0',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['aws'],
+					},
+				},
+				description: 'AWS Bedrock model ID (e.g., anthropic.claude-3-sonnet-20240229-v1:0)',
+			},
+			{
+				displayName: 'Service',
+				name: 'awsService',
+				type: 'string',
+				default: 'bedrock',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['aws'],
+					},
+				},
+				description: 'AWS service name (usually "bedrock")',
+			},
+			{
+				displayName: 'Region',
+				name: 'awsRegion',
+				type: 'string',
+				default: 'us-east-1',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['aws'],
+					},
+				},
+				description: 'AWS region where Bedrock is deployed',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'awsTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['aws'],
+					},
+				},
+				description: 'Sampling temperature (0-1)',
+			},
+
+			// Mistral Configuration
+			{
+				displayName: 'Model',
+				name: 'mistralModel',
+				type: 'string',
+				default: 'mistral-large-latest',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['mistral'],
+					},
+				},
+				description: 'Mistral model to use (e.g., mistral-large-latest, mistral-medium)',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'mistralTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['mistral'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'mistralMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['mistral'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+
+			// Anyscale Configuration
+			{
+				displayName: 'Model',
+				name: 'anyscaleModel',
+				type: 'string',
+				default: 'meta-llama/Llama-3-70b-chat-hf',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['anyscale'],
+					},
+				},
+				description: 'Anyscale model to use (Llama models)',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'anyscaleTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['anyscale'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+
+			// Ollama Configuration
+			{
+				displayName: 'Model',
+				name: 'ollamaModel',
+				type: 'string',
+				default: 'llama3',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['ollama'],
+					},
+				},
+				description: 'Ollama model to use (e.g., llama3, mistral, codellama)',
+			},
+			{
+				displayName: 'API Endpoint',
+				name: 'ollamaApiEndpoint',
+				type: 'string',
+				default: 'http://localhost:11434',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['ollama'],
+					},
+				},
+				description: 'Ollama API endpoint URL',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'ollamaTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['ollama'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+
+			// NVIDIA Configuration
+			{
+				displayName: 'Model',
+				name: 'nvidiaModel',
+				type: 'string',
+				default: 'nvidia/llama-3.1-nemotron-70b-instruct',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['nvidia'],
+					},
+				},
+				description: 'NVIDIA NIM model to use',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'nvidiaTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['nvidia'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'nvidiaMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['nvidia'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+
+			// Databricks Configuration
+			{
+				displayName: 'Model',
+				name: 'databricksModel',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['databricks'],
+					},
+				},
+				description: 'Databricks model serving endpoint name',
+			},
+			{
+				displayName: 'Endpoint',
+				name: 'databricksEndpoint',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['databricks'],
+					},
+				},
+				description: 'Databricks workspace URL',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'databricksTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['databricks'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'databricksMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['databricks'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+
+			// FriendliAI Configuration
+			{
+				displayName: 'Model',
+				name: 'friendliaiModel',
+				type: 'string',
+				default: 'meta-llama-3-70b-instruct',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['friendliai'],
+					},
+				},
+				description: 'FriendliAI model to use',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'friendliaiTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['friendliai'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'friendliaiMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['friendliai'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+
+			// xAI Configuration
+			{
+				displayName: 'Model',
+				name: 'xaiModel',
+				type: 'string',
+				default: 'grok-beta',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['xai'],
+					},
+				},
+				description: 'XAI model to use (Grok models)',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'xaiTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 2,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['xai'],
+					},
+				},
+				description: 'Sampling temperature (0-2)',
+			},
+			{
+				displayName: 'Max Tokens',
+				name: 'xaiMaxTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['xai'],
+					},
+				},
+				description: 'Maximum number of tokens to generate',
+			},
+
+			// Contextual AI Configuration
+			{
+				displayName: 'Model',
+				name: 'contextualaiModel',
+				type: 'string',
+				default: 'rohan',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['contextualai'],
+					},
+				},
+				description: 'Contextual AI model to use',
+			},
+			{
+				displayName: 'Temperature',
+				name: 'contextualaiTemperature',
+				type: 'number',
+				default: 0.7,
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberPrecision: 2,
+				},
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['contextualai'],
+					},
+				},
+				description: 'Sampling temperature (0-1)',
+			},
+			{
+				displayName: 'Max New Tokens',
+				name: 'contextualaiMaxNewTokens',
+				type: 'number',
+				default: 1000,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['contextualai'],
+					},
+				},
+				description: 'Maximum number of new tokens to generate',
+			},
+			{
+				displayName: 'System Prompt',
+				name: 'contextualaiSystemPrompt',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['contextualai'],
+					},
+				},
+				description: 'System prompt to guide the model behavior',
+			},
+			{
+				displayName: 'Avoid Commentary',
+				name: 'contextualaiAvoidCommentary',
+				type: 'boolean',
+				default: false,
+				displayOptions: {
+					show: {
+						'/generativeOptions.modelProvider': ['contextualai'],
+					},
+				},
+				description: 'Whether to avoid generating commentary',
+			},
+
+			// Prompt Configuration (at the end, after provider selection and configuration)
+			{
+				displayName: 'Single Prompt',
+				name: 'singlePrompt',
+				type: 'string',
+				typeOptions: {
+					rows: 4,
+				},
+				default: '',
+				placeholder: 'Summarize this document: {title} {content}',
+				description: 'Prompt to generate content for each individual result. Use {propertyName} to reference properties. At least one of Single Prompt or Grouped Task is required.',
+			},
+			{
+				displayName: 'Grouped Task',
+				name: 'groupedTask',
+				type: 'string',
+				typeOptions: {
+					rows: 4,
+				},
+				default: '',
+				placeholder: 'What are the common themes across all results?',
+				description: 'Prompt to generate content based on all results combined. At least one of Single Prompt or Grouped Task is required.',
+			},
+		],
 	},
 
 	// Additional options for all search operations
@@ -371,6 +1306,23 @@ export const searchFields: INodeProperties[] = [
 						'/operation': ['hybrid'],
 					},
 				},
+			},
+			{
+				displayName: 'Return Format',
+				name: 'returnFormat',
+				type: 'options',
+				default: 'perObject',
+				options: [
+					{
+						name: 'Each Object Per Item',
+						value: 'perObject',
+					},
+					{
+						name: 'All Objects in Single Item',
+						value: 'singleItem',
+					},
+				],
+				description: 'How to format the returned results. "Each Object Per Item" returns one n8n item per object. "All Objects in Single Item" returns the entire result set as one item with objects array and generative fields.',
 			},
 			{
 				displayName: 'Return Properties',
